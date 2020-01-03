@@ -1,0 +1,31 @@
+*.db
+.DS_Store
+*~
+._*
+
+# IDE Files
+#-------------------------
+# Eclipse
+.cache
+.settings
+.buildpath
+.project
+
+# Netbeans
+/nbproject
+
+# VS Code
+.vscode/
+
+## Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+!*.gitkeep
+
+#PHPSTORM
+.idea/
+
