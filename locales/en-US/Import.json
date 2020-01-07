@@ -1,0 +1,41 @@
+{
+	"book": "Book",
+	"steps": {
+		"medias": "Copying associated medias",
+		"metadata": "Fetching metadata",
+		"index": "Indexing book",
+		"status": {
+			"begin": "begin",
+			"OK": "done",
+			"KO": "failed",
+			"unknown": "Call to unknown step"
+		}
+	},
+	"execute": {
+		"nodata": "No book data to import",
+		"start": "Start processing ${X} book(s)",
+		"end": "End processing ${X} book(s) (${Y} succeded)"
+	},
+	"messages": {
+		"metadata": {
+			"error": {
+				"missing": "Missing metadata for this book"
+			}
+		},
+		"medias": {
+			"info": {
+				"nomedia": "No media for this book in this package"
+			},
+			"error": {
+				"copy": "Unable to copy ${source} to ${target}"
+			}
+		},
+		"index": {
+			"error": {
+				"nodata": "Missing data",
+				"delete": "Unable to clear previous data",
+				"add": "Unable to add data for ${$part}"
+			}
+		}
+	}
+}

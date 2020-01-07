@@ -1,0 +1,11 @@
+{
+	"import":  {
+		"scope": "context",
+		"scripts": [
+			{
+				"src": "/store/js/admin/import.js",
+				"type": "text/javascript"
+			}
+		]
+	}
+}

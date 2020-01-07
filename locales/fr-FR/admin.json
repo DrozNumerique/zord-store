@@ -1,0 +1,27 @@
+{
+	"menu": {
+		"import": "Importation",
+		"publish": "Publication"
+	},
+	"tab": {
+		"import": {
+			"title": "Ouvrages numérisés",
+			"input": "Selectionner un fichier de données...",
+			"submit": "Importer",
+			"stop": "Arrêter"
+		},
+		"publish": {
+			"title": "Publication des ouvrages",
+			"list": "Publications...",
+			"submit": "Valider",
+			"books": "Ouvrages",
+			"book": {
+				"id": "ISBN",
+				"title": "Titre"
+			},
+			"select": "Sélectionné",
+			"show": "Consulter en ligne",
+			"epub": "Télécharger l'ePub"
+		}
+	}
+}

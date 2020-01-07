@@ -1,0 +1,27 @@
+{
+	"menu": {
+		"import": "Import",
+		"publish": "Publish"
+	},
+	"tab": {
+		"import": {
+			"title": "Digital Books",
+			"input": "Select data file to import...",
+			"submit": "Import",
+			"stop": "Stop"
+		},
+		"publish": {
+			"title": "Books management",
+			"list": "Publish...",
+			"submit": "OK",
+			"books": "Books",
+			"book": {
+				"id": "ISBN",
+				"title": "Title"
+			},
+			"select": "Selected",
+			"show": "Read online",
+			"epub": "Download ePub"
+		}
+	}
+}

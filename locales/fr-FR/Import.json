@@ -1,0 +1,41 @@
+{
+	"book": "Ouvrage",
+	"steps": {
+		"medias": "Copie des médias associés",
+		"metadata": "Recupération des métadonnées",
+		"index": "Indexation de l'ouvrage'",
+		"status": {
+			"begin": "début",
+			"OK": "fait",
+			"KO": "échec",
+			"unknown": "Appel à une opération inconnue"
+		}
+	},
+	"execute": {
+		"nodata": "Pas de données sur les ouvrages à importer",
+		"start": "Début de traitement pour ${X} ouvrages(s)",
+		"end": "Fin de traitement pour ${X} ouvrages(s) (${Y} complet(s))"
+	},
+	"messages": {
+		"metadata": {
+			"error": {
+				"missing": "Il manque les métadonnées de cet ouvrage"
+			}
+		},
+		"medias": {
+			"info": {
+				"nomedia": "Pas de média pour cet ouvrage dans cette livraison"
+			},
+			"error": {
+				"copy": "Impossible de copier ${source} vers ${target}"
+			}
+		},
+		"index": {
+			"error": {
+				"nodata": "Données incomplètes",
+				"delete": "Impossible de supprimer les données existantes",
+				"add": "Impossible d'ajouter les données de ${$part}"
+			}
+		}
+	}
+}
