@@ -2,10 +2,6 @@
 
 class Store {
     
-    public static function getImportFolder() {
-        return Zord::liveFolder('import');
-    }
-    
 	public static function data($isbn, $type = 'path', $format = 'path') {
 	    $base = DATA_FOLDER.'zord'.DS.$isbn;
 	    $path = null;

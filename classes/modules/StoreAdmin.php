@@ -7,7 +7,7 @@ class StoreAdmin extends Admin {
         $file = $_FILES['file']['name'];
         $type = pathinfo($file, PATHINFO_EXTENSION);
         $name = basename($file);
-        $folder = Store::getImportFolder();
+        $folder = Import::getFolder();
         Zord::resetFolder($folder);
         move_uploaded_file($tmp, $folder.$name);
         if ($type == 'zip') {
@@ -44,44 +44,10 @@ class StoreAdmin extends Admin {
             }
         }
         if (!empty($publish)) {
-            file_put_contents(Store::getImportFolder().'publish.json', Zord::json_encode($publish));
+            file_put_contents(Import::getFolder().'publish.json', Zord::json_encode($publish));
         }
         $parameters = Zord::objectToArray(json_decode($this->params['parameters']));
         return ['pid' => ProcessExecutor::start(Zord::getClassName('Import'), $this->user, $this->lang, $parameters)];
-    }
-    
-    public function publish() {
-        if (isset($this->params['name']) &&
-            isset($this->params['books'])) {
-            $name = $this->params['name'];
-            $books = Zord::objectToArray(json_decode($this->params['books']));
-            (new BookHasContextEntity())->delete([
-                'many' => true,
-                'where' => ['context' => $name]
-            ]);
-            foreach ($books as $book) {
-                if ($book['status'] !== 'del') {
-                    (new BookHasContextEntity())->create([
-                        'book'    => $book['isbn'],
-                        'context' => $name,
-                        'status'  => $book['status']
-                    ]);
-                } else if ($this->user->isManager()) {
-                    (new BookEntity())->delete($book['isbn'], true);
-                    foreach($this->deletePaths($book['isbn']) as $path) {
-                        Zord::deleteRecursive(DATA_FOLDER.$path);
-                    }
-                }
-            }
-        }
-        return $this->index('publish');
-    }
-    
-    protected function deletePaths($isbn) {
-        return [
-            'medias'.DS.$isbn,
-            'zord'.DS.$isbn,
-        ];
     }
 }
 

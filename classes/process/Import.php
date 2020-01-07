@@ -22,7 +22,7 @@ abstract class Import extends ProcessExecutor {
     
     public function __construct() {
         $this->class  = 'Import';
-        $this->folder = Store::getImportFolder();
+        $this->folder = self::getFolder();
     }
     
     public function execute($parameters = []) {
@@ -281,6 +281,10 @@ abstract class Import extends ProcessExecutor {
             }
         }
         return $default;
+    }
+    
+    public static function getFolder() {
+        return Zord::liveFolder('import');
     }
 }
 
