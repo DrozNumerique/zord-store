@@ -1,9 +1,9 @@
 {
-	"book": "Ouvrage",
+	"reference": "Référence",
 	"steps": {
 		"medias": "Copie des médias associés",
 		"metadata": "Recupération des métadonnées",
-		"index": "Indexation de l'ouvrage'",
+		"index": "Indexation des données",
 		"status": {
 			"begin": "début",
 			"OK": "fait",
@@ -12,19 +12,19 @@
 		}
 	},
 	"execute": {
-		"nodata": "Pas de données sur les ouvrages à importer",
-		"start": "Début de traitement pour ${X} ouvrages(s)",
-		"end": "Fin de traitement pour ${X} ouvrages(s) (${Y} complet(s))"
+		"nodata": "Pas de données à importer",
+		"start": "Début de traitement pour ${X} référence(s)",
+		"end": "Fin de traitement pour ${X} référence(s) (${Y} complète(s))"
 	},
 	"messages": {
 		"metadata": {
 			"error": {
-				"missing": "Il manque les métadonnées de cet ouvrage"
+				"missing": "Il manque les métadonnées"
 			}
 		},
 		"medias": {
 			"info": {
-				"nomedia": "Pas de média pour cet ouvrage dans cette livraison"
+				"nomedia": "Pas de média dans cette livraison"
 			},
 			"error": {
 				"copy": "Impossible de copier ${source} vers ${target}"
@@ -34,7 +34,7 @@
 			"error": {
 				"nodata": "Données incomplètes",
 				"delete": "Impossible de supprimer les données existantes",
-				"add": "Impossible d'ajouter les données de ${$part}"
+				"add": "Impossible d'ajouter les données de ${doc}"
 			}
 		}
 	}

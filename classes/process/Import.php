@@ -1,10 +1,10 @@
 <?php
 
-abstract class Import extends ProcessExecutor {
+class Import extends ProcessExecutor {
 
     protected $parameters = [];
     protected $folder     = null;
-    protected $books      = null;
+    protected $refs       = null;
     protected $steps      = null;
     protected $until      = null;
     protected $continue   = IMPORT_CONTINUE;
@@ -16,9 +16,6 @@ abstract class Import extends ProcessExecutor {
     
     protected $done     = false;
     protected $error    = null;
-    
-    protected abstract function book($isbn, $metadata);
-    protected abstract function parts($isbn, $metadata);
     
     public function __construct() {
         $this->class  = 'Import';
@@ -32,56 +29,56 @@ abstract class Import extends ProcessExecutor {
             $this->report(0, 'bold', $thrown);
             return;
         }
-        if (count($this->books) == 0) {
+        if (count($this->refs) == 0) {
             $this->report(0, 'warn', $this->locale->execute->nodata);
             $this->report();
         } else {
             try {
-                $this->preBooks();
+                $this->preRefs();
             } catch (Throwable $thrown) {
                 $this->report(0, 'bold', $thrown);
                 return;
             }
             $this->report(0, 'info', Zord::substitute($this->locale->execute->start, [
-                'X' => count($this->books), 
+                'X' => count($this->refs), 
             ]));
             $this->report();
-            foreach ($this->books as $isbn) {
-                $score = $this->locale->book.' '.($this->count + 1).' / '.count($this->books);
+            foreach ($this->refs as $ean) {
+                $score = $this->locale->reference.' '.($this->count + 1).' / '.count($this->refs);
                 try {
-                    $this->resetBook($isbn);
+                    $this->resetRef($ean);
                     $this->progress(round(100 * $this->progress));
                     $this->step($score);
                 } catch (Throwable $thrown) {
                     $this->report(0, 'bold', $thrown);
                     continue;
                 }
-                $this->report(0, 'info', "┌──────────────────────┐");
-                $this->report(0, 'info', "│ ISBN : " . $isbn . " │");
-                $this->report(0, 'info', "└──────────────────────┘");
+                $this->report(0, 'info', "┌─────────────────────┐");
+                $this->report(0, 'info', "│ EAN : " . $ean . " │");
+                $this->report(0, 'info', "└─────────────────────┘");
                 $this->report(1, 'info', $score);
                 foreach ($this->steps as $step) {
                     $this->report(1, 'info', Zord::str_pad($this->locale->steps->$step, 50, "."));
-                    if ($this->handle($this->execute, true, $isbn, $step)) {
+                    if ($this->handle($this->execute, true, $ean, $step)) {
                         try {
                             if (method_exists($this, $step)) {
-                                $this->done = $this->$step($isbn);
+                                $this->done = $this->$step($ean);
                             } else {
                                 $this->report(1, 'info', Zord::str_pad('', 50 - mb_strlen($this->locale->steps->status->KO), "."), false);
                                 $this->report(0, 'KO', $this->locale->steps->status->KO);
                                 $this->report(2, 'error', $this->locale->steps->status->unknown);
-                                if (!$this->handle($this->continue, false, $isbn, $step)) break;
+                                if (!$this->handle($this->continue, false, $ean, $step)) break;
                             }
                         } catch(Throwable $thrown) {
                             $this->report(1, 'info', Zord::str_pad('', 50 - mb_strlen($this->locale->steps->status->KO), "."), false);
                             $this->report(0, 'KO', $this->locale->steps->status->KO);
                             $this->report(2, 'bold', $thrown);
                             $this->done = false;
-                            if (!$this->handle($this->continue, false, $isbn, $step)) break;
+                            if (!$this->handle($this->continue, false, $ean, $step)) break;
                         }
                         $this->report(1, 'info', Zord::str_pad('', 50 - mb_strlen($this->done ? $this->locale->steps->status->OK : $this->locale->steps->status->KO), "."), false);
                         $this->report(0, $this->done ? 'OK' : 'KO', $this->done ? $this->locale->steps->status->OK : $this->locale->steps->status->KO);
-                        if ((!$this->done && !$this->handle($this->continue, false, $isbn, $step)) || $step == $this->until) {
+                        if ((!$this->done && !$this->handle($this->continue, false, $ean, $step)) || $step == $this->until) {
                             break;
                         }
                     }
@@ -89,17 +86,17 @@ abstract class Import extends ProcessExecutor {
                 $this->report();
                 if ($this->done) {
                     $this->success++;
-                } else if (!$this->handle($this->continue, false, $isbn))  {
+                } else if (!$this->handle($this->continue, false, $ean))  {
                     break;
                 }
             }
             $this->report(0, 'info', Zord::substitute($this->locale->execute->end, [
-                'X' => count($this->books),
+                'X' => count($this->refs),
                 'Y' => $this->success
             ]));
             $this->report();
             try {
-                $this->postBooks();
+                $this->postRefs();
             } catch (Throwable $thrown) {
                 $this->report(0, 'bold', $thrown);
                 return;
@@ -115,10 +112,10 @@ abstract class Import extends ProcessExecutor {
                 $this->folder = $this->folder.DS;
             }
         }
-        if (isset($parameters['books'])) {
-            $this->books = $parameters['books'];
-            if (!is_array($this->books)) {
-                $this->books = [$this->books];
+        if (isset($parameters['refs'])) {
+            $this->refs = $parameters['refs'];
+            if (!is_array($this->refs)) {
+                $this->refs = [$this->refs];
             }
         }
         if (isset($parameters['steps'])) {
@@ -138,45 +135,33 @@ abstract class Import extends ProcessExecutor {
         }
     }
     
-    protected function preBooks() {}
+    protected function preRefs() {}
     
-    protected function postBooks() {}
+    protected function postRefs() {}
     
-    protected function resetBook($isbn) {
+    protected function resetRef($ean) {
         $this->count++;
         $this->done = false;
-        $this->progress = $this->count / count($this->books);
-        $folder = Store::data($isbn);
+        $this->progress = $this->count / count($this->refs);
+        $folder = Store::data($ean);
         if (!file_exists($folder)) {
             mkdir($folder);
         }
-        $this->error = LOGS_FOLDER.$isbn.'.error.log';
+        $this->error = LOGS_FOLDER.$ean.'.error.log';
         if (file_exists($this->error)) {
             unlink($this->error);
         }
     }
     
-    protected function metadata($isbn) {
-        $result = true;
-        if (!file_exists(Store::data($isbn, 'meta'))) {
-            $this->logError('metadata', $this->locale->messages->metadata->error->missing);
-            $result = false;
-        } else {
-            $book = $this->book($isbn, Store::data($isbn, 'meta', 'array'));
-            if ((new BookEntity())->retrieve($isbn)) {
-                (new BookEntity())->update($isbn, $book);
-            } else {
-                (new BookEntity())->create($book);
-            }
-        }
-        return $result;
+    protected function metadata($ean) {
+        return true;
     }
     
-    protected function medias($isbn) {
+    protected function medias($ean) {
         $result = true;
-        $folder = $this->folder.$isbn;
+        $folder = $this->folder.$ean;
         if (file_exists($folder) && is_dir($folder)) {
-            $target = Store::media($isbn);
+            $target = Store::media($ean);
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder), RecursiveIteratorIterator::SELF_FIRST);
             if ($iterator->current()) {
                 $this->info(2, $target);
@@ -206,22 +191,38 @@ abstract class Import extends ProcessExecutor {
         }
         return $result;
     }
+    
+    protected function sources($ean) {
+        return null;
+    }
         
-    protected function index($isbn) {
+    protected function index($ean) {
         $result = true;
-        $metadata = Store::data($isbn, 'meta', 'array');
-        $parts = $this->parts($isbn, $metadata);
-        if (!empty($parts)) {
+        $sources = $this->sources($ean);
+        if (!empty($sources['docs']) || !empty($sources['meta'])) {
             $index = new SolrClient(Zord::value('connection', ['solr','zord']));
-            $delete = $index->deleteByQuery('ean_s:'.$isbn);
+            $key = Zord::value('index', 'key');
+            $type = Zord::value('index', ['fields',$key]);
+            $field = $key.Zord::value('index', ['suffix',$type]);
+            $delete = $index->deleteByQuery($field.':'.$ean);
             $response = $delete->getResponse();
             if ($response) {
-                foreach ($parts as &$part) {
+                if (!empty($sources['docs'])) {
+                    $docs = $sources['docs'];
+                } else {
+                    $docs = [$sources['meta']];
+                }
+                foreach ($docs as $doc) {
                     $document = new SolrInputDocument();
-                    $document->addField('id', $isbn.'_'.$part['name']);
+                    $document->addField('id', $ean.'_'.$doc['name']);
                     foreach (Zord::value('index', 'fields') as $key => $type) {
-                        $default = Zord::value('index', ['default',$key]);
-                        $value = isset($part[$key]) ? $part[$key] : (isset($metadata[$key]) ? $metadata[$key] : (isset($default) ? $default : null));
+                        $value = Zord::value('index', ['default',$key]);
+                        foreach ([$doc, isset($sources['meta']) ? $sources['meta'] : []] as $source) {
+                            if (isset($source[$key])) {
+                                $value = $source[$key];
+                                break;
+                            }
+                        }
                         if (isset($value)) {
                             $field = $key.Zord::value('index', ['suffix',$type]);
                             if (!is_array($value)) {
@@ -236,7 +237,7 @@ abstract class Import extends ProcessExecutor {
                     $response = $update->getResponse();
                     if (!$response) {
                         $this->logError('index', Zord::substitute($this->locale->messages->index->error->add), [
-                            'part' => $part['name']
+                            'doc' => $doc['name']
                         ]);
                         $result = false;
                     }
@@ -258,15 +259,15 @@ abstract class Import extends ProcessExecutor {
         file_put_contents($this->error, '['.$step.'] '.$message."\n", FILE_APPEND);
     }
     
-    private function handle($operation, $default, $isbn, $step = null) {
+    private function handle($operation, $default, $ean, $step = null) {
         if ($operation === !$default) {
             return !$default;
         } else if (is_array($operation)) {
-            if (isset($operation[$isbn])) {
-                if ($operation[$isbn] === !$default) {
+            if (isset($operation[$ean])) {
+                if ($operation[$ean] === !$default) {
                     return !$default;
-                } else if (is_array($operation[$isbn])) {
-                    if (isset($operation[$isbn][$step]) && $operation[$isbn][$step] === !$default) {
+                } else if (is_array($operation[$ean])) {
+                    if (isset($operation[$ean][$step]) && $operation[$ean][$step] === !$default) {
                         return !$default;
                     }
                 }
@@ -274,7 +275,7 @@ abstract class Import extends ProcessExecutor {
                 if ($operation[$step] === !$default) {
                     return !$default;
                 } else if (is_array($operation[$step])) {
-                    if (isset($operation[$step][$isbn]) && $operation[$step][$isbn] === !$default) {
+                    if (isset($operation[$step][$ean]) && $operation[$step][$ean] === !$default) {
                         return !$default;
                     }
                 }

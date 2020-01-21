@@ -1,9 +1,9 @@
 {
-	"book": "Book",
+	"reference": "Reference",
 	"steps": {
 		"medias": "Copying associated medias",
 		"metadata": "Fetching metadata",
-		"index": "Indexing book",
+		"index": "Indexing data",
 		"status": {
 			"begin": "begin",
 			"OK": "done",
@@ -12,19 +12,19 @@
 		}
 	},
 	"execute": {
-		"nodata": "No book data to import",
-		"start": "Start processing ${X} book(s)",
-		"end": "End processing ${X} book(s) (${Y} succeded)"
+		"nodata": "No data to import",
+		"start": "Start processing ${X} reference(s)",
+		"end": "End processing ${X} reference(s) (${Y} succeded)"
 	},
 	"messages": {
 		"metadata": {
 			"error": {
-				"missing": "Missing metadata for this book"
+				"missing": "Missing metadata"
 			}
 		},
 		"medias": {
 			"info": {
-				"nomedia": "No media for this book in this package"
+				"nomedia": "No media in this package"
 			},
 			"error": {
 				"copy": "Unable to copy ${source} to ${target}"
@@ -34,7 +34,7 @@
 			"error": {
 				"nodata": "Missing data",
 				"delete": "Unable to clear previous data",
-				"add": "Unable to add data for ${$part}"
+				"add": "Unable to add data for ${$doc}"
 			}
 		}
 	}
