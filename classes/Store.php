@@ -40,18 +40,25 @@ class Store {
 	    if (!isset($names)) {
 	        return DATA_FOLDER.'medias'.DS.$ean.DS;
 	    }
-	    if (!is_array($names)) {
+	    if (isset($names) && !is_array($names)) {
 	        $names = [$names];
 	    }
-	    if (!is_array($types)) {
+	    if (isset($types) && !is_array($types)) {
 	        $types = [$types];
 	    }
 	    foreach ($names as $name) {
-	        foreach ($types as $ext) {
-	            $media = 'medias'.DS.$ean.DS.$name.'.'.$ext;
+	        if (!isset($types) || empty($types)) {
+	            $media = 'medias'.DS.$ean.DS.$name;
 	            if (file_exists(DATA_FOLDER.$media)) {
 	                return $media;
 	            }
+	        } else {
+    	        foreach ($types as $ext) {
+    	            $media = 'medias'.DS.$ean.DS.$name.'.'.$ext;
+    	            if (file_exists(DATA_FOLDER.$media)) {
+    	                return $media;
+    	            }
+    	        }
 	        }
 	    }
 	    return false;
