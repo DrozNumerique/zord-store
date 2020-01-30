@@ -3,8 +3,8 @@
 class Store {
     
 	public static function data($ean, $path = null, $format = 'path') {
-	    $base = DATA_FOLDER.'zord'.DS.$ean;
-	    $path = $base.(isset($path) ? DS.$path : '');
+	    $base = DATA_FOLDER.'zord'.DS.$ean.DS;
+	    $path = $base.(isset($path) ? $path : '');
 	    $data = null;
    	    switch ($format) {
    	        case 'path': {
