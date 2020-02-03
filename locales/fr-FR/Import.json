@@ -30,6 +30,12 @@
 				"copy": "Impossible de copier ${source} vers ${target}"
 			}
 		},
+		"image": {
+			"info": {
+				"processor": "Traitement d'images par ",
+				"convert": "Commande de conversion : "
+			}
+		},
 		"index": {
 			"error": {
 				"nodata": "Données incomplètes",

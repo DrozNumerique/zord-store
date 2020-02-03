@@ -30,6 +30,12 @@
 				"copy": "Unable to copy ${source} to ${target}"
 			}
 		},
+		"image": {
+			"info": {
+				"processor": "Image processed by ",
+				"convert": "Convert command: "
+			}
+		},
 		"index": {
 			"error": {
 				"nodata": "Missing data",
