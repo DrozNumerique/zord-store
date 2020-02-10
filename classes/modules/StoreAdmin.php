@@ -26,8 +26,12 @@ class StoreAdmin extends Admin {
         Zord::resetFolder($folder);
         $this->uploadImport($folder);
         $this->prepareImport($folder);
-        $parameters = Zord::objectToArray(json_decode($this->params['parameters']));
-        return ['pid' => ProcessExecutor::start(Zord::getClassName('Import'), $this->user, $this->lang, $parameters)];
+        return ProcessExecutor::start(
+            Zord::getClassName('Import'),
+            $this->user,
+            $this->lang,
+            Zord::objectToArray(json_decode($this->params['parameters']))
+        );
     }
 }
 

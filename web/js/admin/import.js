@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		    		toggleImport(true);
 			    	label.style.display = 'none';
 			    	stop.style.display = 'inline';
-		    		pid = result.pid;
+		    		pid = result;
 		    		checkAction();
 		    	}
 		    );
