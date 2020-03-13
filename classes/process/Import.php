@@ -58,8 +58,8 @@ class Import extends ProcessExecutor {
                 $this->report(0, 'info', "└─────────────────────┘");
                 $this->report(1, 'info', $score);
                 foreach ($this->steps as $step) {
-                    $this->report(1, 'info', Zord::str_pad($this->locale->steps->$step, 50, "."));
                     if ($this->handle($this->execute, true, $ean, $step)) {
+                        $this->report(1, 'info', Zord::str_pad($this->locale->steps->$step, 50, "."));
                         try {
                             if (method_exists($this, $step)) {
                                 $this->done = $this->$step($ean);
@@ -159,7 +159,7 @@ class Import extends ProcessExecutor {
     
     protected function medias($ean) {
         $result = true;
-        $folder = $this->folder.$ean;
+        $folder = $this->folder.$ean.DS;
         if (file_exists($folder) && is_dir($folder)) {
             $target = Store::media($ean);
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folder), RecursiveIteratorIterator::SELF_FIRST);
@@ -169,7 +169,7 @@ class Import extends ProcessExecutor {
                     if (is_dir($file)) {
                         continue;
                     }
-                    $name = substr($file, strlen($folder) + 1);
+                    $name = substr($file, strlen($folder));
                     $this->info(3, $name);
                     $dir = dirname($target.$name);
                     if (!is_dir($dir)) {
@@ -259,7 +259,7 @@ class Import extends ProcessExecutor {
         file_put_contents($this->error, '['.$step.'] '.$message."\n", FILE_APPEND);
     }
     
-    private function handle($operation, $default, $ean, $step = null) {
+    protected function handle($operation, $default, $ean, $step = null) {
         if ($operation === !$default) {
             return !$default;
         } else if (is_array($operation)) {
