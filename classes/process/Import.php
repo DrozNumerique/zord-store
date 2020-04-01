@@ -29,7 +29,7 @@ class Import extends ProcessExecutor {
             $this->report(0, 'bold', $thrown);
             return;
         }
-        if (count($this->refs) == 0) {
+        if (!isset($this->refs) || count($this->refs) == 0) {
             $this->report(0, 'warn', $this->locale->execute->nodata);
             $this->report();
         } else {
