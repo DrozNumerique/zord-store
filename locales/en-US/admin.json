@@ -5,7 +5,7 @@
 	},
 	"tab": {
 		"import": {
-			"title": "Digital Books",
+			"title": "Digital Data",
 			"input": "Select data file to import...",
 			"submit": "Import",
 			"stop": "Stop"

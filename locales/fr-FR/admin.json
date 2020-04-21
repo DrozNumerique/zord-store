@@ -5,7 +5,7 @@
 	},
 	"tab": {
 		"import": {
-			"title": "Ouvrages numérisés",
+			"title": "Données numériques",
 			"input": "Selectionner un fichier de données...",
 			"submit": "Importer",
 			"stop": "Arrêter"
