@@ -28,7 +28,7 @@ class StoreAdmin extends Admin {
         $this->prepareImport($folder);
         return ProcessExecutor::start(
             Zord::getClassName('Import'),
-            $this->user,
+            $this->user->login,
             $this->lang,
             Zord::objectToArray(json_decode($this->params['parameters']))
         );
