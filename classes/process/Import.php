@@ -143,10 +143,6 @@ class Import extends ProcessExecutor {
         $this->count++;
         $this->done = false;
         $this->progress = $this->count / count($this->refs);
-        $folder = Store::data($ean);
-        if (!file_exists($folder)) {
-            mkdir($folder);
-        }
         $this->error = LOGS_FOLDER.$ean.'.error.log';
         if (file_exists($this->error)) {
             unlink($this->error);

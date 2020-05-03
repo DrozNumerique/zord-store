@@ -1,44 +1,10 @@
 <?php
 
 class Store {
-    
-	public static function data($ean, $path = null, $format = 'path') {
-	    $base = DATA_FOLDER.'zord'.DS.$ean.DS;
-	    $path = $base.(isset($path) ? $path : '');
-	    $data = null;
-   	    switch ($format) {
-   	        case 'path': {
-   	            $data = $path;
-   	            break;
-   	        }
-   	        case 'content': {
-   	            $data = file_get_contents($path);
-   	            break;
-   	        }
-   	        case 'object': {
-   	            $data = json_decode(file_get_contents($path));
-   	            break;
-   	        }
-   	        case 'array': {
-   	            $data = Zord::arrayFromJSONFile($path);
-   	            break;
-   	        }
-   	        case 'document': {
-   	            $data = new DOMDocument();
-   	            $data->load($path);
-   	            break;
-   	        }
-   	        case 'xml': {
-   	            $data = simplexml_load_string(file_get_contents($path), "SimpleXMLElement", LIBXML_NOCDATA);
-   	            break;
-   	        }
-	    }
-	    return $data;
-	}
 	
 	public static function media($ean, $names = null, $types = ['jpg','png']) {
 	    if (!isset($names)) {
-	        return DATA_FOLDER.'medias'.DS.$ean.DS;
+	        return STORE_FOLDER.'medias'.DS.$ean.DS;
 	    }
 	    if (isset($names) && !is_array($names)) {
 	        $names = [$names];
@@ -49,13 +15,13 @@ class Store {
 	    foreach ($names as $name) {
 	        if (!isset($types) || empty($types)) {
 	            $media = 'medias'.DS.$ean.DS.$name;
-	            if (file_exists(DATA_FOLDER.$media)) {
+	            if (file_exists(STORE_FOLDER.$media)) {
 	                return $media;
 	            }
 	        } else {
     	        foreach ($types as $ext) {
     	            $media = 'medias'.DS.$ean.DS.$name.'.'.$ext;
-    	            if (file_exists(DATA_FOLDER.$media)) {
+    	            if (file_exists(STORE_FOLDER.$media)) {
     	                return $media;
     	            }
     	        }
@@ -72,5 +38,37 @@ class Store {
 	        $pos += $length;
 	    }
 	    return implode('-', $tokens);
+	}
+	
+	public static function data($path = null, $format = 'path') {
+	    $data = null;
+	    switch ($format) {
+	        case 'path': {
+	            $data = $path;
+	            break;
+	        }
+	        case 'content': {
+	            $data = file_get_contents($path);
+	            break;
+	        }
+	        case 'object': {
+	            $data = json_decode(file_get_contents($path));
+	            break;
+	        }
+	        case 'array': {
+	            $data = Zord::arrayFromJSONFile($path);
+	            break;
+	        }
+	        case 'document': {
+	            $data = new DOMDocument();
+	            $data->load($path);
+	            break;
+	        }
+	        case 'xml': {
+	            $data = simplexml_load_string(file_get_contents($path), "SimpleXMLElement", LIBXML_NOCDATA);
+	            break;
+	        }
+	    }
+	    return $data;
 	}
 }
