@@ -188,14 +188,14 @@ class Import extends ProcessExecutor {
         return $result;
     }
     
-    protected function sources($ean) {
+    protected function contents($ean) {
         return null;
     }
         
     protected function index($ean) {
         $result = true;
-        $sources = $this->sources($ean);
-        if (!empty($sources['docs']) || !empty($sources['meta'])) {
+        $contents = $this->contents($ean);
+        if (!empty($contents)) {
             $index = new SolrClient(Zord::value('connection', ['solr','zord']));
             $key = Zord::value('index', 'key');
             $type = Zord::value('index', ['fields',$key]);
@@ -203,22 +203,19 @@ class Import extends ProcessExecutor {
             $delete = $index->deleteByQuery($field.':'.$ean);
             $response = $delete->getResponse();
             if ($response) {
-                if (!empty($sources['docs'])) {
-                    $docs = $sources['docs'];
-                } else {
-                    $docs = [$sources['meta']];
-                }
-                foreach ($docs as $doc) {
+                foreach ($contents as $content) {
+                    if (!isset($content[$key])) {
+                        $this->logError('index', Zord::substitute($this->locale->messages->index->error->key), [
+                            'key'     => $key,
+                            'content' => $content['name']
+                        ]);
+                        $result = false;
+                        continue;
+                    }
                     $document = new SolrInputDocument();
-                    $document->addField('id', $ean.'_'.$doc['name']);
+                    $document->addField('id', $ean.'_'.$content['name']);
                     foreach (Zord::value('index', 'fields') as $key => $type) {
-                        $value = Zord::value('index', ['default',$key]);
-                        foreach ([$doc, isset($sources['meta']) ? $sources['meta'] : []] as $source) {
-                            if (isset($source[$key])) {
-                                $value = $source[$key];
-                                break;
-                            }
-                        }
+                        $value = $content[$key] ?? Zord::value('index', ['default',$key]);
                         if (isset($value)) {
                             $field = $key.Zord::value('index', ['suffix',$type]);
                             if (!is_array($value)) {
@@ -233,7 +230,7 @@ class Import extends ProcessExecutor {
                     $response = $update->getResponse();
                     if (!$response) {
                         $this->logError('index', Zord::substitute($this->locale->messages->index->error->add), [
-                            'doc' => $doc['name']
+                            'content' => $content['name']
                         ]);
                         $result = false;
                     }

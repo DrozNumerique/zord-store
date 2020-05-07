@@ -40,7 +40,8 @@
 			"error": {
 				"nodata": "Missing data",
 				"delete": "Unable to clear previous data",
-				"add": "Unable to add data for ${$doc}"
+				"missing": "Missing key ${key} for ${content}",
+				"add": "Unable to add data for ${content}"
 			}
 		}
 	}

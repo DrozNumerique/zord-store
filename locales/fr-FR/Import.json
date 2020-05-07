@@ -40,7 +40,8 @@
 			"error": {
 				"nodata": "Données incomplètes",
 				"delete": "Impossible de supprimer les données existantes",
-				"add": "Impossible d'ajouter les données de ${doc}"
+				"missing": "Attribut ${key} manquant pour ${content}",
+				"add": "Impossible d'ajouter les données de ${content}"
 			}
 		}
 	}
