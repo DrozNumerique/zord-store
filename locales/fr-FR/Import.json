@@ -1,8 +1,8 @@
 {
 	"reference": "Référence",
 	"steps": {
-		"medias": "Copie des ressources associés",
-		"metadata": "Recupération des métadonnées",
+		"resources": "Récupération des ressources",
+		"metadata": "Récupération des métadonnées",
 		"index": "Indexation des contenus",
 		"status": {
 			"begin": "début",

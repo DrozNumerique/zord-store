@@ -14,15 +14,15 @@ class Store {
 	    }
 	    foreach ($names as $name) {
 	        if (!isset($types) || empty($types)) {
-	            $media = $category.DS.$ean.DS.$name;
-	            if (file_exists(STORE_FOLDER.$media)) {
-	                return $media;
+	            $resource = $category.DS.$ean.DS.$name;
+	            if (file_exists(STORE_FOLDER.$resource)) {
+	                return $resource;
 	            }
 	        } else {
     	        foreach ($types as $ext) {
-    	            $media = $category.DS.$ean.DS.$name.'.'.$ext;
-    	            if (file_exists(STORE_FOLDER.$media)) {
-    	                return $media;
+    	            $resource = $category.DS.$ean.DS.$name.'.'.$ext;
+    	            if (file_exists(STORE_FOLDER.$resource)) {
+    	                return $resource;
     	            }
     	        }
 	        }

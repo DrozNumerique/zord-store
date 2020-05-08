@@ -1,7 +1,7 @@
 {
 	"reference": "Reference",
 	"steps": {
-		"resources": "Copying associated resources",
+		"resources": "Fetching resources",
 		"metadata": "Fetching metadata",
 		"index": "Indexing contents",
 		"status": {
