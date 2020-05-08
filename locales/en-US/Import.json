@@ -1,9 +1,9 @@
 {
 	"reference": "Reference",
 	"steps": {
-		"medias": "Copying associated medias",
+		"resources": "Copying associated resources",
 		"metadata": "Fetching metadata",
-		"index": "Indexing data",
+		"index": "Indexing contents",
 		"status": {
 			"begin": "begin",
 			"OK": "done",
@@ -22,9 +22,9 @@
 				"missing": "Missing metadata"
 			}
 		},
-		"medias": {
+		"resources": {
 			"info": {
-				"nomedia": "No media in this package"
+				"none": "No resource for this book"
 			},
 			"error": {
 				"copy": "Unable to copy ${source} to ${target}"

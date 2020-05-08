@@ -1,9 +1,9 @@
 {
 	"reference": "Référence",
 	"steps": {
-		"medias": "Copie des médias associés",
+		"medias": "Copie des ressources associés",
 		"metadata": "Recupération des métadonnées",
-		"index": "Indexation des données",
+		"index": "Indexation des contenus",
 		"status": {
 			"begin": "début",
 			"OK": "fait",
@@ -22,9 +22,9 @@
 				"missing": "Il manque les métadonnées"
 			}
 		},
-		"medias": {
+		"resources": {
 			"info": {
-				"nomedia": "Pas de média dans cette livraison"
+				"none": "Pas de resource pour cet ouvrage"
 			},
 			"error": {
 				"copy": "Impossible de copier ${source} vers ${target}"

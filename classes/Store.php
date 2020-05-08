@@ -2,9 +2,9 @@
 
 class Store {
 	
-	public static function media($ean, $names = null, $types = ['jpg','png']) {
+	public static function resource($category, $ean, $names = null, $types = ['jpg','png']) {
 	    if (!isset($names)) {
-	        return STORE_FOLDER.'medias'.DS.$ean.DS;
+	        return STORE_FOLDER.$category.DS.$ean.DS;
 	    }
 	    if (isset($names) && !is_array($names)) {
 	        $names = [$names];
@@ -14,13 +14,13 @@ class Store {
 	    }
 	    foreach ($names as $name) {
 	        if (!isset($types) || empty($types)) {
-	            $media = 'medias'.DS.$ean.DS.$name;
+	            $media = $category.DS.$ean.DS.$name;
 	            if (file_exists(STORE_FOLDER.$media)) {
 	                return $media;
 	            }
 	        } else {
     	        foreach ($types as $ext) {
-    	            $media = 'medias'.DS.$ean.DS.$name.'.'.$ext;
+    	            $media = $category.DS.$ean.DS.$name.'.'.$ext;
     	            if (file_exists(STORE_FOLDER.$media)) {
     	                return $media;
     	            }
