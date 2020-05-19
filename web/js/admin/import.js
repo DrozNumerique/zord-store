@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						module:'Portal',
 						action:'upload',
 						name:'import',
-						callback: function(result) {
+						success: function(result) {
 							progress.style = 'width:' + result.percent + '%;';
 							step.innerHTML = result.message;
 							if (result.percent > 3) {
