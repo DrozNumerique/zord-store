@@ -9,3 +9,9 @@
         					<span id="label-stop" style="display:none;"><?php echo $locale->tab->import->stop; ?></span>
     		                <input id="submit-file-import" type="submit" style="display:none;" disabled/>
         				</label>
+<?php if (!defined('IMPORT_CONTINUE')) {?>
+        				<label for="continue-import" class="admin-input-checkbox">
+	        				<input id="continue-import" type="checkbox" name="continue" value="true"/>
+	        				<span id="label-continue"><?php echo $locale->tab->import->continue; ?></span>
+	        			</label>
+<?php } ?>

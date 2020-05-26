@@ -1,0 +1,11 @@
+{
+	"admin": {
+		"styles": [
+			{
+				"media": "screen",
+				"type": "text/css",
+				"href": "/store/css/admin.css"
+			}
+		]
+	}
+}
