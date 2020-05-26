@@ -30,15 +30,14 @@ class StoreAdmin extends Admin {
         Zord::resetFolder($folder);
         $this->uploadImport($folder); 
         $this->prepareImport($folder);
-        $parameters = $this->parameters();
+        $parameters = Zord::objectToArray(json_decode($this->params['parameters'] ?? []));
         $continue = $this->params['continue'] ?? null;
         $parameters['continue'] = isset($continue) ? $continue === 'true' : (defined('IMPORT_CONTINUE') ? IMPORT_CONTINUE : false);
-        $this->params['parameters'] = Zord::json_encode($parameters);
         return ProcessExecutor::start(
             Zord::getClassName('Import'),
             $this->user->login,
             $this->lang,
-            $this->parameters()
+            $parameters
         );
     }
 }
