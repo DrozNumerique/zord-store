@@ -7,7 +7,7 @@ class Import extends ProcessExecutor {
     protected $refs       = null;
     protected $steps      = null;
     protected $until      = null;
-    protected $continue   = IMPORT_CONTINUE;
+    protected $continue   = null;
     protected $execute    = true;
     
     protected $count    = 0;
@@ -18,8 +18,9 @@ class Import extends ProcessExecutor {
     protected $error    = null;
     
     public function __construct() {
-        $this->class  = 'Import';
-        $this->folder = self::getFolder();
+        $this->class    = 'Import';
+        $this->folder   = self::getFolder();
+        $this->continue = defined('IMPORT_CONTINUE') ? IMPORT_CONTINUE : false;
     }
     
     public function execute($parameters = []) {
