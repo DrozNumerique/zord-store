@@ -81,88 +81,69 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	}
 	
 	function checkUpload() {
-		setTimeout(
-			function() {
-				invokeZord(
-					{
-						module:'Portal',
-						action:'upload',
-						name:'import',
-						success: function(result) {
-							progress.style = 'width:' + result.percent + '%;';
-							step.innerHTML = result.message;
-							if (result.percent > 3) {
-								progress.innerHTML = result.percent + '%';
-							}
-							if (result.percent < 100) {
-								checkUpload();
-							} else {
-								setTimeout(function() {
-									step.innerHTML = PORTAL.locales[LANG].process.wait;
-									wait.style.display = 'block';
-								}, 500);
-							}
-						}
+		invokeZord(
+			{
+				module:'Portal',
+				action:'upload',
+				name:'import',
+				success: function(result) {
+					progress.style = 'width:' + result.percent + '%;';
+					step.innerHTML = result.message;
+					if (result.percent > 3) {
+						progress.innerHTML = result.percent + '%';
 					}
-				);
-			},
-			500
+					if (result.percent < 100) {
+						setTimeout(checkUpload, 500);
+					} else {
+						setTimeout(function() {
+							step.innerHTML = PORTAL.locales[LANG].process.wait;
+							wait.style.display = 'block';
+						}, 200);
+					}
+				}
+			}
 		);
-	}
-	
-	function checkResult(result) {
-		resetNotify(true);
-		toggleImport(true);
-    	label.style.display = 'none';
-    	stop.style.display = 'inline';
-		pid = result;
-		checkAction();
 	}
 
 	function checkAction() {
-		setTimeout(
-			function() {
-				if (pid == undefined || pid == null) {
-					if (wait.style.display == 'block') {
-						wait.style.display = 'none';
-						reportLine('info',  0, '',     true);
-						reportLine('error', 0, PORTAL.locales[LANG].process.stopped, true);
-						reportLine('info',  0, '',     true);
-					}
-					return;
+		if (pid == undefined || pid == null) {
+			if (wait.style.display == 'block') {
+				wait.style.display = 'none';
+				reportLine('info',  0, '',     true);
+				reportLine('error', 0, PORTAL.locales[LANG].process.stopped, true);
+				reportLine('info',  0, '',     true);
+			}
+			return;
+		}
+		checkProcess(pid, offset, function(result) {
+			if (result.error !== undefined) {
+				alert(result.error);
+			} else {
+				progress.style = 'width:' + result.progress + '%;';
+				if (result.progress > 3) {
+					progress.innerHTML = result.progress + '%';
 				}
-				checkProcess(pid, offset, function(result) {
-					if (result.error !== undefined) {
-						alert(result.error);
-					} else {
-						progress.style = 'width:' + result.progress + '%;';
-						if (result.progress > 3) {
-							progress.innerHTML = result.progress + '%';
-						}
-						if (result.step == 'closed') {
-							step.innerHTML = PORTAL.locales[LANG].process.closed;
-						} else if (result.step == 'init') {
-							step.innerHTML = PORTAL.locales[LANG].process.init;
-						} else {
-							step.innerHTML = result.step;
-						}
-						[].forEach.call(result.report, function(line) {
-							reportLine(line.style, line.indent, line.message, line.newline);
-							offset++;
-						});
-						if (result.step !== 'closed') {
-							checkAction();
-						} else {
-							label.style.display = 'inline';
-					    	stop.style.display = 'none';
-							wait.style.display = 'none';
-							reportLine('info', 0, '', true);
-						}
-					}
+				if (result.step == 'closed') {
+					step.innerHTML = PORTAL.locales[LANG].process.closed;
+				} else if (result.step == 'init') {
+					step.innerHTML = PORTAL.locales[LANG].process.init;
+				} else {
+					step.innerHTML = result.step;
+				}
+				[].forEach.call(result.report, function(line) {
+					reportLine(line.style, line.indent, line.message, line.newline);
+					offset++;
 				});
-			},
-			500
-		);
+				if (result.step !== 'closed') {
+					setTimeout(checkAction, 500);
+				} else {
+					label.style.display = 'inline';
+			    	stop.style.display = 'none';
+					wait.style.display = 'none';
+					reportLine('info', 0, '', true);
+				}
+			}
+		});
 	}
 	
 	file.addEventListener("change", function(event) {
@@ -173,17 +154,23 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	form.addEventListener("submit", function(event) {
 	    event.preventDefault();
 	    if (pid == undefined || pid == null) {
-			uploadZord(
-			    this, 
-			    function() {
+	    	invokeZord({
+	    		form: this,
+	    		upload: (this.file.value !== null && this.file.value !== ''),
+	    		uploading: function() {
 			    	resetNotify(false);
 			    	toggleImport(false);
-			    	checkUpload();
-			    },
-			    function(result) {
-			    	checkResult(result);
-			    }
-			);
+			    	setTimeout(checkUpload, 500);
+	    		},
+	    		success: function(result) {
+	    			resetNotify(true);
+	    			toggleImport(true);
+	    	    	label.style.display = 'none';
+	    	    	stop.style.display = 'inline';
+	    			pid = result;
+			    	checkAction();
+	    		}
+	    	});
 	    } else {
 	    	label.style.display = 'inline';
 	    	stop.style.display = 'none';
