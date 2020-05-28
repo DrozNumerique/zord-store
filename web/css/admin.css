@@ -2,3 +2,13 @@ label[for="continue-import"] {
 	margin-top: 10px;
 	display: block;
 }
+
+.admin-file-reset-button {
+	border-radius: 0;
+	margin-right: 2px;
+}
+
+.admin-file-reset-button.disabled {
+	background: gray;
+	color: black;
+}

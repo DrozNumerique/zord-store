@@ -7,6 +7,7 @@
 		"import": {
 			"title": "Digital Data",
 			"input": "Select data file to import...",
+			"reset": "Reset",
 			"submit": "Import",
 			"stop": "Stop",
 			"continue": "Continue import in case of error"

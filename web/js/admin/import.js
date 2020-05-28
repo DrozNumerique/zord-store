@@ -1,50 +1,32 @@
-var initialized;
-var notify;
-var step;
-var wait;
-var progress;
-var report;
-var form;
-var submit;
-var file;
-var label; 
-var stop; 
-var offset;
-var pid;
-
-function initImport() {
-	if (initialized == undefined) {
-		notify = document.getElementById('import-notify');
-		step = document.getElementById('import-step');
-		wait = document.getElementById('import-wait');
-		progress = document.getElementById('import-progress');
-		report = document.getElementById('import-report');
-		form = document.getElementById('import-form');
-		submit = document.getElementById('submit-file-import');
-		file = document.getElementById('file-import');
-		label = document.getElementById('label-import'); 
-		stop = document.getElementById('label-stop'); 
-		offset = 0;
-		pid = null;
-		initialized = true;
-	}
-}
-
-function toggleImport(activate) {
-	if (activate) {
-		file.classList.add('admin-input-file-valued');
-		submit.parentNode.classList.add('admin-input-file-button-enabled');
-		submit.disabled = false;
-	} else {
-		file.classList.remove('admin-input-file-valued');
-		submit.parentNode.classList.remove('admin-input-file-button-enabled');
-		submit.disabled = true;
-	}
-}
-
 document.addEventListener("DOMContentLoaded", function(event) {
 	
-	initImport();
+	var notify = document.getElementById('import-notify');
+	var step = document.getElementById('import-step');
+	var wait = document.getElementById('import-wait');
+	var progress = document.getElementById('import-progress');
+	var report = document.getElementById('import-report');
+	var form = document.getElementById('import-form');
+	var submit = document.getElementById('submit-file-import');
+	var reset = document.getElementById('button-file-reset');
+	var file = document.getElementById('file-import');
+	var label = document.getElementById('label-import'); 
+	var stop = document.getElementById('label-stop'); 
+	var offset = 0;
+	var pid = null;
+
+	function toggleImport(activate) {
+		if (activate) {
+			file.classList.add('admin-input-file-valued');
+			reset.classList.remove('disabled');
+			submit.parentNode.classList.add('admin-input-file-button-enabled');
+			submit.disabled = false;
+		} else {
+			file.classList.remove('admin-input-file-valued');
+			reset.classList.add('disabled');
+			submit.parentNode.classList.remove('admin-input-file-button-enabled');
+			submit.disabled = true;
+		}
+	}
 	
 	function reportLine(style, indent, message, newline) {
 		span = document.createElement("span");
@@ -146,9 +128,24 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		});
 	}
 	
+	document.addEventListener('activate', function(event) {
+		toggleImport(true);
+	});
+	
+	document.addEventListener('deactivate', function(event) {
+		toggleImport(false);
+	});
+	
 	file.addEventListener("change", function(event) {
 		this.firstElementChild.innerText = document.getElementById(this.getAttribute('for')).files[0].name;
 		toggleImport(true);
+	});
+	
+	reset.addEventListener("click", function(event) {
+		input = document.getElementById('input-file-import');
+		input.value = '';
+		input.parentNode.firstElementChild.innerText = INPUT;
+		toggleImport(false);
 	});
 	
 	form.addEventListener("submit", function(event) {

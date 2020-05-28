@@ -6,6 +6,12 @@
 				"type": "text/css",
 				"href": "/store/css/admin.css"
 			}
+		],
+		"scripts": [
+			{
+				"type": "text/javascript",
+				"template": "/portal/page/admin/script/var"
+			}
 		]
 	}
 }

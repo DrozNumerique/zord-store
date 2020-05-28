@@ -4,6 +4,9 @@
         					<span><?php echo $locale->tab->import->input; ?></span>
     	   					<input id="input-file-import" type="file" style="display:none;" name="file"/>
         				</label>
+    	   				<label id="button-file-reset" class="admin-button admin-file-reset-button disabled">
+    	   					<span><?php echo $locale->tab->import->reset; ?></span>
+    	   				</label>
         				<label for="submit-file-import" class="admin-input-file-button">
         					<span id="label-import"><?php echo $locale->tab->import->submit; ?></span>
         					<span id="label-stop" style="display:none;"><?php echo $locale->tab->import->stop; ?></span>
