@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				if (result.step !== 'closed') {
 					setTimeout(checkAction, 500);
 				} else {
+			    	pid = null;
 					label.style.display = 'inline';
 			    	stop.style.display = 'none';
 					wait.style.display = 'none';
