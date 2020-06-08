@@ -60,24 +60,24 @@ class Import extends ProcessExecutor {
                 $this->report(1, 'info', $score);
                 foreach ($this->steps as $step) {
                     if ($this->handle($this->execute, true, $ean, $step)) {
-                        $this->report(1, 'info', Zord::str_pad($this->locale->steps->$step, 50, "."));
+                        $this->report(1, 'info', $this->locale->steps->$step, true, true);
                         try {
                             if (method_exists($this, $step)) {
                                 $this->done = $this->$step($ean);
                             } else {
-                                $this->report(1, 'info', Zord::str_pad('', 50 - mb_strlen($this->locale->steps->status->KO), "."), false);
+                                $this->report(1, 'info', '', false, true);
                                 $this->report(0, 'KO', $this->locale->steps->status->KO);
                                 $this->report(2, 'error', $this->locale->steps->status->unknown);
                                 if (!$this->handle($this->continue, false, $ean, $step)) break;
                             }
                         } catch(Throwable $thrown) {
-                            $this->report(1, 'info', Zord::str_pad('', 50 - mb_strlen($this->locale->steps->status->KO), "."), false);
+                            $this->report(1, 'info', '', false, true);
                             $this->report(0, 'KO', $this->locale->steps->status->KO);
                             $this->report(2, 'bold', $thrown);
                             $this->done = false;
                             if (!$this->handle($this->continue, false, $ean, $step)) break;
                         }
-                        $this->report(1, 'info', Zord::str_pad('', 50 - mb_strlen($this->done ? $this->locale->steps->status->OK : $this->locale->steps->status->KO), "."), false);
+                        $this->report(1, 'info', '', false, true);
                         $this->report(0, $this->done ? 'OK' : 'KO', $this->done ? $this->locale->steps->status->OK : $this->locale->steps->status->KO);
                         if ((!$this->done && !$this->handle($this->continue, false, $ean, $step)) || $step == $this->until) {
                             break;
