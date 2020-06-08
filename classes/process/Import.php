@@ -175,10 +175,10 @@ class Import extends ProcessExecutor {
             if ($response) {
                 foreach ($contents as $content) {
                     if (!isset($content[$key])) {
-                        $this->logError('index', Zord::substitute($this->locale->messages->index->error->key), [
+                        $this->logError('index', Zord::substitute($this->locale->messages->index->error->missing, [
                             'key'     => $key,
                             'content' => $content['name']
-                        ]);
+                        ]));
                         $result = false;
                         continue;
                     }
