@@ -129,12 +129,49 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		});
 	}
 	
+	function launchProcess(params) {
+	    if (pid == undefined || pid == null) {
+	    	activated = !submit.disabled;
+	    	if (params.before == undefined || params.before == null) {
+	    		params.before = function() {
+			    	resetNotify(false);
+			    	toggleImport(false);
+				}
+	    	}
+	    	if (params.success == undefined || params.success == null) {
+	    		params.success = function(result) {
+	    			resetNotify(true);
+	    			toggleImport(true);
+	    	    	label.style.display = 'none';
+	    	    	stop.style.display = 'inline';
+	    			pid = result;
+	    			setTimeout(checkAction, 200);
+	    		};
+	    	}
+	    	if (params.after == undefined || params.after == null) {
+	    		params.after = function() {
+			    	toggleImport(activated);
+	    		}
+	    	}
+	    	invokeZord(params);
+	    } else {
+	    	label.style.display = 'inline';
+	    	stop.style.display = 'none';
+	    	killProcess(pid);
+	    	pid = null;
+	    }
+	}
+	
 	document.addEventListener('activate', function(event) {
 		toggleImport(true);
 	});
 	
 	document.addEventListener('deactivate', function(event) {
 		toggleImport(false);
+	});
+	
+	document.addEventListener('launch', function(event) {
+		launchProcess(event.detail);
 	});
 	
 	file.addEventListener("change", function(event) {
@@ -151,30 +188,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	
 	form.addEventListener("submit", function(event) {
 	    event.preventDefault();
-	    if (pid == undefined || pid == null) {
-	    	invokeZord({
-	    		form: this,
-	    		upload: (this.file.value !== null && this.file.value !== ''),
-	    		uploading: function() {
-			    	resetNotify(false);
-			    	toggleImport(false);
-			    	setTimeout(checkUpload, 500);
-	    		},
-	    		success: function(result) {
-	    			resetNotify(true);
-	    			toggleImport(true);
-	    	    	label.style.display = 'none';
-	    	    	stop.style.display = 'inline';
-	    			pid = result;
-			    	checkAction();
-	    		}
-	    	});
-	    } else {
-	    	label.style.display = 'inline';
-	    	stop.style.display = 'none';
-	    	killProcess(pid);
-	    	pid = null;
-	    }
+	    launchProcess({
+    		form: this,
+	    	upload: (this.file.value !== null && this.file.value !== ''),
+			uploading: function() {
+		    	setTimeout(checkUpload, 500);
+			}
+	    });
 	    return false;
 	}, false); 
 	
