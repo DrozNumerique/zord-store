@@ -171,8 +171,7 @@ class Import extends ProcessExecutor {
             $type = Zord::value('index', ['fields',$key]);
             $field = $key.Zord::value('index', ['suffix',$type]);
             $delete = $index->deleteByQuery($field.':'.$ean);
-            $response = $delete->getResponse();
-            if ($response) {
+            if ($delete->success()) {
                 foreach ($contents as $content) {
                     if (!isset($content[$key])) {
                         $this->logError('index', Zord::substitute($this->locale->messages->index->error->missing, [
@@ -197,8 +196,7 @@ class Import extends ProcessExecutor {
                         }
                     }
                     $update = $index->addDocument($document);
-                    $response = $update->getResponse();
-                    if (!$response) {
+                    if (!$update->success()) {
                         $this->logError('index', Zord::substitute($this->locale->messages->index->error->add), [
                             'content' => $content['name']
                         ]);
