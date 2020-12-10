@@ -3,5 +3,13 @@
 		"import": {
 			"response": "DATA"
 		}
+	},
+	"Portal": {
+		"unapi": {
+			"shortcut": "unapi",
+			"parameters": {
+				"id": "FILTER_SANITIZE_NUMBER_INT"
+			}
+		}
 	}
 }

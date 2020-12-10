@@ -1,0 +1,13 @@
+{
+	"view": {
+		"/portal/link": {
+			"before": "/portal/link/unapi"
+		},
+		"/xml/unapi/formats": {
+			"instruction": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		},
+		"/xml/rdf/bibliontology": {
+			"instruction": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+		}
+	}
+}

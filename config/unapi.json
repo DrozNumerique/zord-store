@@ -1,0 +1,9 @@
+{
+	"formats": {
+		"rdf_bibliontology": {
+			"template": "/xml/rdf/bibliontology",
+			"type": "application/rdf+xml",
+			"docs": "http://bibliontology.com/"
+		}
+	}
+}
