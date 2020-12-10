@@ -30,7 +30,7 @@
 <?php if (isset($models['language'])) { ?>
     <dc:language><?php echo $models['language']; ?></dc:language>
 <?php } ?>
-<?php if (isset($models['isbn'])) { ?>
+<?php if (isset($models['isbn13'])) { ?>
     <bibo:isbn13><?php echo $models['isbn13']; ?></bibo:isbn13>
 <?php } ?>
 <?php if (isset($models['uri'])) { ?>
