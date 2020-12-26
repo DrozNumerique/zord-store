@@ -77,6 +77,10 @@ class Store {
 	    $key = Zord::value('index', 'key');
 	    $type = Zord::value('index', ['fields',$key]);
 	    $field = $key.Zord::value('index', ['suffix',$type]);
-	    return $index->deleteByQuery($field.':'.$ean);
+	    $delete = $index->deleteByQuery($field.':'.$ean);
+	    if ($delete->success()) {
+	        $index->commit();
+	    }
+	    return $delete;
 	}
 }
