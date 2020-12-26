@@ -71,4 +71,12 @@ class Store {
 	    }
 	    return $data;
 	}
+	
+	public static function deindex($ean) {
+	    $index = new SolrClient(Zord::value('connection', ['solr','zord']));
+	    $key = Zord::value('index', 'key');
+	    $type = Zord::value('index', ['fields',$key]);
+	    $field = $key.Zord::value('index', ['suffix',$type]);
+	    return $index->deleteByQuery($field.':'.$ean);
+	}
 }
