@@ -72,15 +72,15 @@ class Store {
 	    return $data;
 	}
 	
-	public static function deindex($ean) {
+	public static function deindex($ean, $commit = true) {
 	    $index = new SolrClient(Zord::value('connection', ['solr','zord']));
 	    $key = Zord::value('index', 'key');
 	    $type = Zord::value('index', ['fields',$key]);
 	    $field = $key.Zord::value('index', ['suffix',$type]);
 	    $delete = $index->deleteByQuery($field.':'.$ean);
-	    if ($delete->success()) {
+	    if ($commit && $delete->success()) {
 	        $index->commit();
 	    }
-	    return $delete;
+	    return [$index, $key, $type, $field, $delete];
 	}
 }

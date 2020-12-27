@@ -166,11 +166,7 @@ class Import extends ProcessExecutor {
         $result = true;
         $contents = $this->contents($ean);
         if (!empty($contents)) {
-            $index = new SolrClient(Zord::value('connection', ['solr','zord']));
-            $key = Zord::value('index', 'key');
-            $type = Zord::value('index', ['fields',$key]);
-            $field = $key.Zord::value('index', ['suffix',$type]);
-            $delete = $index->deleteByQuery($field.':'.$ean);
+            list($index, $key, $type, $field, $delete) = Store::deindex($ean, false);
             if ($delete->success()) {
                 foreach ($contents as $content) {
                     if (!isset($content[$key])) {
