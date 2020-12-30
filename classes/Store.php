@@ -83,4 +83,45 @@ class Store {
 	    }
 	    return [$index, $key, $type, $field, $delete];
 	}
+	
+	public static function field($key) {
+	    foreach (Zord::value('index', 'fields') as $field => $type) {
+	        if ($key == $field) {
+	            return $key.Zord::value('index', ['suffix',$type]);
+	        }
+	    }
+	    return false;
+	}
+	
+	public static function search($keywords, $context = null, $rows = 10000) {
+	    $config = Zord::value('store', 'search');
+	    $keywords = implode(' AND ', array_map(function($val) {
+	        return '*'.$val.'*';
+	    }, explode(' ', str_replace(['(',')','*',':'], ' ', strtolower($keywords)))));
+        $results = [];
+        $client = new SolrClient(Zord::value('connection', ['solr','zord']));
+        $query  = new SolrQuery();
+        $query->setQuery('*:*');
+        $query->setStart(0);
+        $query->setRows($rows);
+        $query->addField(self::field(Zord::value('index', 'key')));
+        $filter = 'id:(*'.$config['type'].'*) AND ';
+        $filter .= isset($context) ? self::field('context').':'.$context.' AND ' : '';
+        $filter .= '('.implode(' OR ', array_map(function($key) use ($keywords) {
+            return self::field($key).':('.$keywords.')';
+        }, $config['fields'])).')';
+        $query->addFilterQuery($filter);
+        $result = $client->query($query);
+        $result = $result->getResponse();
+        if (!empty($result['response']['docs'])) {
+            foreach ($result['response']['docs'] as $doc) {
+                $ean = $doc->ean_s;
+                if (!in_array($ean, $results)) {
+                    $results[] = $ean;
+                }
+            }
+        }
+        return $results;
+	}
+	
 }

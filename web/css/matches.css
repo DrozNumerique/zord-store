@@ -1,0 +1,21 @@
+ul.matches {
+	list-style: none;
+	padding: 0;
+	max-width: 500px;
+	color: black;
+	border: 1px solid;
+}
+
+ul.matches li {
+	background: white;
+	padding: 2px 5px;
+}
+
+ul.matches li:nth-child(even) {
+	background: #eee;
+}
+
+ul.matches li:hover {
+	background: #32455d;
+	color: white;
+}

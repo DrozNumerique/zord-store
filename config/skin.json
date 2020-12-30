@@ -1,0 +1,15 @@
+{
+	"styles": {
+		"matches": {
+			"media": "screen",
+			"type": "text/css",
+			"href": "/store/css/matches.css"
+		}
+	},
+	"scripts": {
+		"matches": {
+			"type": "text/javascript",
+			"src": "/store/js/matches.js"
+		}
+	}
+}
