@@ -112,7 +112,7 @@ class Store {
         }, $config['fields'])).')';
         $query->addFilterQuery($filter);
         $result = $client->query($query);
-        $result = $result->getResponse();
+        $result = Zord::objectToArray(json_decode($result->getRawResponse()));
         if (!empty($result['response']['docs'])) {
             foreach ($result['response']['docs'] as $doc) {
                 $ean = $doc->ean_s;
