@@ -84,20 +84,20 @@ class Store {
 	    return [$index, $key, $type, $field, $delete];
 	}
 	
-	public static function field($key) {
+	public static function field($key, $collapse = false) {
 	    foreach (Zord::value('index', 'fields') as $field => $type) {
 	        if ($key == $field) {
-	            return $key.Zord::value('index', ['suffix',$type]);
+	            return $key.($collapse ? '_collapse' : '').Zord::value('index', ['suffix',$type]);
 	        }
 	    }
 	    return false;
 	}
 	
-	public static function search($keywords, $context = null, $rows = 10000) {
-	    $config = Zord::value('store', 'search');
+	public static function match($keywords, $values = null, $rows = 10000) {
+	    $config = Zord::value('index', 'match');
 	    $keywords = implode(' AND ', array_map(function($val) {
-	        return '*'.$val.'*';
-	    }, explode(' ', str_replace(['(',')','*',':'], ' ', strtolower($keywords)))));
+	        return '*'.Zord::collapse($val, false).'*';
+	    }, explode(' ', str_replace(['(',')','*',':'], ' ', $keywords))));
         $results = [];
         $client = new SolrClient(Zord::value('connection', ['solr','zord']));
         $query  = new SolrQuery();
@@ -105,10 +105,15 @@ class Store {
         $query->setStart(0);
         $query->setRows($rows);
         $query->addField(self::field(Zord::value('index', 'key')));
-        $filter = 'id:(*'.$config['type'].'*) AND ';
-        $filter .= isset($context) ? self::field('context').':'.$context.' AND ' : '';
+        $filter = implode(' AND ', array_map(function($key, $value) use ($values) {
+            $field = self::field($key);
+            if ($field === false) {
+                $field = $key;
+            }
+            return $field.':('.Zord::substitute($value, $values).')';
+        }, array_keys($config['select']), array_values($config['select']))).' AND ';
         $filter .= '('.implode(' OR ', array_map(function($key) use ($keywords) {
-            return self::field($key).':('.$keywords.')';
+            return self::field($key, true).':('.$keywords.')';
         }, $config['fields'])).')';
         $query->addFilterQuery($filter);
         $result = $client->query($query);

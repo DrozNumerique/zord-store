@@ -182,12 +182,18 @@ class Import extends ProcessExecutor {
                     foreach (Zord::value('index', 'fields') as $key => $type) {
                         $value = $content[$key] ?? Zord::value('index', ['default',$key]);
                         if (isset($value)) {
-                            $field = $key.Zord::value('index', ['suffix',$type]);
+                            $field = Store::field($key);
                             if (!is_array($value)) {
                                 $value = [$value];
                             }
                             foreach ($value as $item) {
                                 $document->addField($field, $item);
+                            }
+                            if (in_array($key, Zord::value('index', ['match','fields']))) {
+                                $field = Store::field($key, true);
+                                foreach ($value as $item) {
+                                    $document->addField($field, Zord::collapse($item, false));
+                                }
                             }
                         }
                     }
