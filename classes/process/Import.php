@@ -165,8 +165,10 @@ class Import extends ProcessExecutor {
     protected function index($ean) {
         $result = true;
         $contents = $this->contents($ean);
+        $matches = Zord::value('index', ['match','fields']);
+        $keys = array_keys(Zord::value('index', 'fields'));
         if (!empty($contents)) {
-            list($index, $key, $type, $field, $delete) = Store::deindex($ean, false);
+            list($index, $key, , $field, $delete) = Store::deindex($ean, false);
             if ($delete->success()) {
                 foreach ($contents as $content) {
                     if (!isset($content[$key])) {
@@ -179,7 +181,7 @@ class Import extends ProcessExecutor {
                     }
                     $document = new SolrInputDocument();
                     $document->addField('id', $ean.'_'.$content['name']);
-                    foreach (Zord::value('index', 'fields') as $key => $type) {
+                    foreach ($keys as $key) {
                         $value = $content[$key] ?? Zord::value('index', ['default',$key]);
                         if (isset($value)) {
                             $field = Store::field($key);
@@ -189,7 +191,7 @@ class Import extends ProcessExecutor {
                             foreach ($value as $item) {
                                 $document->addField($field, $item);
                             }
-                            if (in_array($key, Zord::value('index', ['match','fields']))) {
+                            if (in_array($key, $matches)) {
                                 $field = Store::field($key, true);
                                 foreach ($value as $item) {
                                     $document->addField($field, Zord::collapse($item, false));
