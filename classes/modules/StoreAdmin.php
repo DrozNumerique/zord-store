@@ -22,7 +22,10 @@ class StoreAdmin extends Admin {
     protected function prepareImport($folder) {}
     
     protected function parameters() {
-        return Zord::objectToArray(json_decode($this->params['parameters']));
+        $parameters = Zord::objectToArray(json_decode($this->params['parameters'] ?? []));
+        $continue = $this->params['continue'] ?? null;
+        $parameters['continue'] = isset($continue) ? $continue === 'true' : (defined('IMPORT_CONTINUE') ? IMPORT_CONTINUE : false);
+        return $parameters;
     }
     
     public function import() {
@@ -30,14 +33,11 @@ class StoreAdmin extends Admin {
         Zord::resetFolder($folder);
         $this->uploadImport($folder); 
         $this->prepareImport($folder);
-        $parameters = Zord::objectToArray(json_decode($this->params['parameters'] ?? []));
-        $continue = $this->params['continue'] ?? null;
-        $parameters['continue'] = isset($continue) ? $continue === 'true' : (defined('IMPORT_CONTINUE') ? IMPORT_CONTINUE : false);
         return ProcessExecutor::start(
             Zord::getClassName('Import'),
             $this->user->login,
             $this->lang,
-            $parameters
+            $this->parameters()
         );
     }
 }
