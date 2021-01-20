@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 						setTimeout(checkUpload, 500);
 					} else {
 						setTimeout(function() {
-							step.innerHTML = PORTAL.locales[LANG].process.wait;
+							step.innerHTML = LOCALE.process.wait;
 							wait.style.display = 'block';
 						}, 200);
 					}
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			if (wait.style.display == 'block') {
 				wait.style.display = 'none';
 				reportLine('info',  0, '',     true);
-				reportLine('error', 0, PORTAL.locales[LANG].process.stopped, true);
+				reportLine('error', 0, LOCALE.process.stopped, true);
 				reportLine('info',  0, '',     true);
 			}
 			return;
@@ -106,9 +106,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					progress.innerHTML = result.progress + '%';
 				}
 				if (result.step == 'closed') {
-					step.innerHTML = PORTAL.locales[LANG].process.closed;
+					step.innerHTML = LOCALE.process.closed;
 				} else if (result.step == 'init') {
-					step.innerHTML = PORTAL.locales[LANG].process.init;
+					step.innerHTML = LOCALE.process.init;
 				} else {
 					step.innerHTML = result.step;
 				}
