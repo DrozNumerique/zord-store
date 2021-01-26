@@ -1,10 +1,21 @@
 {
 	"import":  {
 		"scope": "context",
+		"styles": [
+			{
+				"media": "screen",
+				"type": "text/css",
+				"href": "/store/css/admin/import.css"
+			}
+		],
 		"scripts": [
 			{
 				"src": "/store/js/admin/import.js",
 				"type": "text/javascript"
+			},
+			{
+				"type": "text/javascript",
+				"template": "/portal/page/admin/import/script/var"
 			}
 		]
 	}

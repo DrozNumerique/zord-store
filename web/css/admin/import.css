@@ -6,6 +6,7 @@ label[for="continue-import"] {
 .admin-file-reset-button {
 	border-radius: 0;
 	margin-right: 2px;
+	border-radius: 0 !important;
 }
 
 .admin-file-reset-button.disabled {
