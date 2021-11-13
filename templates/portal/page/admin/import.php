@@ -12,6 +12,6 @@
                         <div class="admin-progress">
                         	<div id="import-progress" style="width:0%;"></div>
                         </div>    			
-                       	<div id="import-report" class="admin-report" style="display:none;"></div>       
+                       	<div id="import-report" class="admin-report" style="display:none;" data-over="false"></div>       
                    	</div>
                	</div>         	

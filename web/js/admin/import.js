@@ -28,12 +28,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 	}
 	
-	function reportLine(style, indent, message, newline) {
+	function reportLine(style, indent, message, newline, over) {
 		span = document.createElement("span");
 		span.classList.add(style);
 		span.style.paddingLeft = (indent * 2) + "em";
 		span.innerHTML = message;
+		if (report.dataset.over == 'true') {
+			report.removeChild(report.lastElementChild);
+		}
 		report.appendChild(span);
+		report.dataset.over = over ? 'true' : 'false';
 		if (newline) {
 			var br = document.createElement("br");
 			report.appendChild(br);
@@ -91,9 +95,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		if (pid == undefined || pid == null) {
 			if (wait.style.display == 'block') {
 				wait.style.display = 'none';
-				reportLine('info',  0, '',     true);
-				reportLine('error', 0, LOCALE.process.stopped, true);
-				reportLine('info',  0, '',     true);
+				reportLine('info',  0, '',     true, false);
+				reportLine('error', 0, LOCALE.process.stopped, true, false);
+				reportLine('info',  0, '',     true, false);
 			}
 			return;
 		}
@@ -113,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					step.innerHTML = result.step;
 				}
 				[].forEach.call(result.report, function(line) {
-					reportLine(line.style, line.indent, line.message, line.newline);
+					reportLine(line.style, line.indent, line.message, line.newline, line.over);
 					offset++;
 				});
 				if (result.step !== 'closed') {
@@ -123,7 +127,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 					label.style.display = 'inline';
 			    	stop.style.display = 'none';
 					wait.style.display = 'none';
-					reportLine('info', 0, '', true);
+					reportLine('info', 0, '', true, false);
 				}
 			}
 		});

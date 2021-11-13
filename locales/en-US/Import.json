@@ -33,7 +33,9 @@
 		"image": {
 			"info": {
 				"processor": "Image processed by ",
-				"convert": "Convert command: "
+				"convert": "Convert command: ",
+				"folder": "From directory ",
+				"count": "${count} image(s) processed"
 			}
 		},
 		"index": {

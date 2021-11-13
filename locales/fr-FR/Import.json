@@ -33,7 +33,9 @@
 		"image": {
 			"info": {
 				"processor": "Traitement d'images par ",
-				"convert": "Commande de conversion : "
+				"convert": "Commande de conversion : ",
+				"folder": "Depuis le répertoire ",
+				"count": "${count} image(s) traitée(s)"
 			}
 		},
 		"index": {
