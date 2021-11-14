@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	var file = document.getElementById('file-import');
 	var label = document.getElementById('label-import'); 
 	var stop = document.getElementById('label-stop'); 
-	var offset = 0;
 	var pid = null;
 
 	function toggleImport(activate) {
@@ -28,23 +27,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 	}
 	
-	function reportLine(style, indent, message, newline, over) {
-		span = document.createElement("span");
-		span.classList.add(style);
-		span.style.paddingLeft = (indent * 2) + "em";
-		span.innerHTML = message;
-		if (report.dataset.over == 'true') {
-			report.removeChild(report.lastElementChild);
-		}
-		report.appendChild(span);
-		report.dataset.over = over ? 'true' : 'false';
-		if (newline) {
-			var br = document.createElement("br");
-			report.appendChild(br);
-		}
-		report.scrollTop = report.scrollHeight - report.clientHeight;
-	}
-	
 	function resetNotify(displayReport) {
 		step.innerHTML = '&nbsp;';
 		progress.style.width = '0%';
@@ -59,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
     		report.style.display = 'block';
     		wait.style.display = 'block';
-    		offset = 0;
 		} else {
 			wait.style.display = 'none';
     		report.style.display = 'none';
@@ -90,74 +71,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 			}
 		);
 	}
-
-	function checkAction() {
-		if (pid == undefined || pid == null) {
-			if (wait.style.display == 'block') {
-				wait.style.display = 'none';
-				reportLine('info',  0, '',     true, false);
-				reportLine('error', 0, LOCALE.process.stopped, true, false);
-				reportLine('info',  0, '',     true, false);
-			}
-			return;
-		}
-		checkProcess(pid, offset, function(result) {
-			if (result.error !== undefined) {
-				alert(result.error);
-			} else {
-				progress.style = 'width:' + result.progress + '%;';
-				if (result.progress > 3) {
-					progress.innerHTML = result.progress + '%';
-				}
-				if (result.step == 'closed') {
-					step.innerHTML = LOCALE.process.closed;
-				} else if (result.step == 'init') {
-					step.innerHTML = LOCALE.process.init;
-				} else {
-					step.innerHTML = result.step;
-				}
-				[].forEach.call(result.report, function(line) {
-					reportLine(line.style, line.indent, line.message, line.newline, line.over);
-					offset++;
-				});
-				if (result.step !== 'closed') {
-					setTimeout(checkAction, 500);
-				} else {
-			    	pid = null;
-					label.style.display = 'inline';
-			    	stop.style.display = 'none';
-					wait.style.display = 'none';
-					reportLine('info', 0, '', true, false);
-				}
-			}
-		});
-	}
 	
-	function launchProcess(params) {
-	    if (pid == undefined || pid == null) {
-	    	activated = !submit.disabled;
-	    	if (params.before == undefined || params.before == null) {
-	    		params.before = function() {
-			    	resetNotify(false);
-			    	toggleImport(false);
-				}
-	    	}
-	    	if (params.success == undefined || params.success == null) {
-	    		params.success = function(result) {
-	    			resetNotify(true);
-	    			toggleImport(true);
-	    	    	label.style.display = 'none';
-	    	    	stop.style.display = 'inline';
-	    			pid = result;
-	    			setTimeout(checkAction, 200);
-	    		};
-	    	}
-	    	if (params.after == undefined || params.after == null) {
-	    		params.after = function() {
-			    	toggleImport(activated);
-	    		}
-	    	}
-	    	invokeZord(params);
+	function launchImport(params) {
+		if (pid == undefined || pid == null) {
+		    invokeZord(params);
 	    } else {
 	    	label.style.display = 'inline';
 	    	stop.style.display = 'none';
@@ -175,7 +92,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	});
 	
 	document.addEventListener('launch', function(event) {
-		launchProcess(event.detail);
+		launchImport(event.detail);
 	});
 	
 	file.addEventListener("change", function(event) {
@@ -192,12 +109,70 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	
 	form.addEventListener("submit", function(event) {
 	    event.preventDefault();
-	    launchProcess({
+		launchImport({
     		form: this,
 	    	upload: (this.file.value !== null && this.file.value !== ''),
 			uploading: function() {
 		    	setTimeout(checkUpload, 500);
-			}
+			},
+			before: function() {
+		    	resetNotify(false);
+		    	toggleImport(false);
+			},
+			after: function() {
+		    	toggleImport(!submit.disabled);
+	   		},
+			success: function(result) {
+		   		resetNotify(true);
+		   		toggleImport(true);
+		   	    label.style.display = 'none';
+		   	    stop.style.display = 'inline';
+		   		pid = result;
+		   		setTimeout(followProcess, 200, {
+					process: result,
+					offset: 0,
+					period : 500,
+					stopped: function() {
+						if (pid == undefined || pid == null) {
+							if (wait.style.display == 'block') {
+								wait.style.display = 'none';
+								reportLine(report, 'info',  0, '',     true, false);
+								reportLine(report, 'error', 0, LOCALE.process.stopped, true, false);
+								reportLine(report, 'info',  0, '',     true, false);
+							}
+							return true;
+						} else {
+							return false;
+						}
+					},
+					error: function(result) {
+						alert(result.error);
+					},
+					closed: function() {
+				    	pid = null;
+						label.style.display = 'inline';
+				    	stop.style.display = 'none';
+						wait.style.display = 'none';
+						reportLine(report, 'info', 0, '', true, false);
+					},
+					follow: function(result) {
+						progress.style = 'width:' + result.progress + '%;';
+						if (result.progress > 3) {
+							progress.innerHTML = result.progress + '%';
+						}
+						if (result.step == 'closed') {
+							step.innerHTML = LOCALE.process.closed;
+						} else if (result.step == 'init') {
+							step.innerHTML = LOCALE.process.init;
+						} else {
+							step.innerHTML = result.step;
+						}
+						[].forEach.call(result.report, function(line) {
+							reportLine(report, line.style, line.indent, line.message, line.newline, line.over);
+						});
+					}
+				});
+		   	}
 	    });
 	    return false;
 	}, false); 
