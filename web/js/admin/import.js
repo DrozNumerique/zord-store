@@ -27,26 +27,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 	}
 	
-	function resetNotify(displayReport) {
-		step.innerHTML = '&nbsp;';
-		progress.style.width = '0%';
-		progress.innerHTML = '';
-		notify.style.display = 'block';
-		if (displayReport) {
-			elements = report.querySelectorAll('span,br');
-			if (elements) {
-				[].forEach.call(elements, function(element) {
-					element.parentNode.removeChild(element);
-				});
-			}
-    		report.style.display = 'block';
-    		wait.style.display = 'block';
-		} else {
-			wait.style.display = 'none';
-    		report.style.display = 'none';
-		}
-	}
-	
 	function checkUpload() {
 		invokeZord(
 			{
@@ -116,60 +96,49 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		    	setTimeout(checkUpload, 500);
 			},
 			before: function() {
-		    	resetNotify(false);
+		    	resetProcess({
+					notify:notify,
+					step:step,
+					progress:progress,
+					report:report,
+					wait:wait
+				}, false);
 		    	toggleImport(false);
 			},
 			after: function() {
 		    	toggleImport(!submit.disabled);
 	   		},
 			success: function(result) {
-		   		resetNotify(true);
+		    	resetProcess({
+					notify:notify,
+					step:step,
+					progress:progress,
+					report:report,
+					wait:wait
+				}, true);
 		   		toggleImport(true);
 		   	    label.style.display = 'none';
 		   	    stop.style.display = 'inline';
 		   		pid = result;
 		   		setTimeout(followProcess, 200, {
-					process: result,
-					offset: 0,
-					period : 500,
+					process : result,
+					offset  : 0,
+					period  : 500,
+					report  : report,
+					step    : step,
+					wait    : wait,
+					progress: progress,
 					stopped: function() {
 						if (pid == undefined || pid == null) {
-							if (wait.style.display == 'block') {
-								wait.style.display = 'none';
-								reportLine(report, 'info',  0, '',     true, false);
-								reportLine(report, 'error', 0, LOCALE.process.stopped, true, false);
-								reportLine(report, 'info',  0, '',     true, false);
-							}
 							return true;
 						} else {
 							return false;
 						}
 					},
-					error: function(result) {
-						alert(result.error);
-					},
 					closed: function() {
 				    	pid = null;
 						label.style.display = 'inline';
 				    	stop.style.display = 'none';
-						wait.style.display = 'none';
-						reportLine(report, 'info', 0, '', true, false);
-					},
-					follow: function(result) {
-						progress.style = 'width:' + result.progress + '%;';
-						if (result.progress > 3) {
-							progress.innerHTML = result.progress + '%';
-						}
-						if (result.step == 'closed') {
-							step.innerHTML = LOCALE.process.closed;
-						} else if (result.step == 'init') {
-							step.innerHTML = LOCALE.process.init;
-						} else {
-							step.innerHTML = result.step;
-						}
-						[].forEach.call(result.report, function(line) {
-							reportLine(report, line.style, line.indent, line.message, line.newline, line.over);
-						});
 					}
 				});
 		   	}
