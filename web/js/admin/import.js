@@ -9,9 +9,28 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	var submit = document.getElementById('submit-file-import');
 	var reset = document.getElementById('button-file-reset');
 	var file = document.getElementById('file-import');
-	var label = document.getElementById('label-import'); 
+	var start = document.getElementById('label-import'); 
 	var stop = document.getElementById('label-stop'); 
 	var pid = null;
+	var controls = {
+		notify:notify,
+		step:step,
+		progress:progress,
+		report:report,
+		wait:wait,
+		start:start,
+		stop:stop
+	};
+	var follow = {
+		period  : 500,
+		controls: controls,
+		killed  : function() {
+			return pid == undefined || pid == null;
+		},
+		close   : function() {
+			pid = null;
+		}
+	};
 
 	function toggleImport(activate) {
 		if (activate) {
@@ -56,8 +75,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		if (pid == undefined || pid == null) {
 		    invokeZord(params);
 	    } else {
-	    	label.style.display = 'inline';
-	    	stop.style.display = 'none';
+			resetProcess({controls: {
+				start: start,
+				stop : stop
+			}});
 	    	killProcess(pid);
 	    	pid = null;
 	    }
@@ -96,51 +117,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		    	setTimeout(checkUpload, 500);
 			},
 			before: function() {
-		    	resetProcess({
-					notify:notify,
-					step:step,
-					progress:progress,
-					report:report,
-					wait:wait
-				}, false);
+		    	resetProcess(controls);
 		    	toggleImport(false);
 			},
 			after: function() {
 		    	toggleImport(!submit.disabled);
 	   		},
 			success: function(result) {
-		    	resetProcess({
-					notify:notify,
-					step:step,
-					progress:progress,
-					report:report,
-					wait:wait
-				}, true);
-		   		toggleImport(true);
-		   	    label.style.display = 'none';
-		   	    stop.style.display = 'inline';
 		   		pid = result;
-		   		setTimeout(followProcess, 200, {
-					process : result,
-					offset  : 0,
-					period  : 500,
-					report  : report,
-					step    : step,
-					wait    : wait,
-					progress: progress,
-					stopped: function() {
-						if (pid == undefined || pid == null) {
-							return true;
-						} else {
-							return false;
-						}
-					},
-					closed: function() {
-				    	pid = null;
-						label.style.display = 'inline';
-				    	stop.style.display = 'none';
-					}
-				});
+		   		toggleImport(true);
+		    	follow = resetProcess(follow, pid);
+		   		setTimeout(followProcess(follow), 200);
 		   	}
 	    });
 	    return false;
