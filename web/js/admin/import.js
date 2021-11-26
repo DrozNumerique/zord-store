@@ -63,23 +63,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		);
 	}
 	
-	function handleImport() {
-		handleProcess({
-    		form: form,
-	    	upload: (form.file.value !== null && form.file.value !== ''),
-			uploading: function() {
-		    	setTimeout(checkUpload, 500);
-			},
-			before: function() {
-		    	resetProcess(follow);
-		    	toggleImport(false);
-			},
-			after: function() {
-		    	toggleImport(true);
-	   		}
-		}, follow);
-	}
-	
 	document.addEventListener('activate', function(event) {
 		toggleImport(true);
 	});
@@ -88,8 +71,16 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		toggleImport(false);
 	});
 	
-	document.addEventListener('launch', function(event) {
-		handleImport();
+	document.addEventListener('process', function(event) {
+		var params = event.detail;
+		params.before = function() {
+			resetProcess(follow);
+			toggleImport(false);
+		};
+		params.after = function() {
+			toggleImport(true);
+		};
+		handleProcess(event.detail, follow);
 	});
 	
 	file.addEventListener("change", function(event) {
@@ -106,7 +97,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	
 	form.addEventListener("submit", function(event) {
 	    event.preventDefault();
-		handleImport();
+		handleProcess({
+    		form: form,
+	    	upload: (form.file.value !== null && form.file.value !== ''),
+			uploading: function() {
+		    	setTimeout(checkUpload, 500);
+			},
+			before: function() {
+		    	resetProcess(follow);
+		    	toggleImport(false);
+			},
+			after: function() {
+		    	toggleImport(true);
+	   		}
+		}, follow);
 	    return false;
 	}, false); 
 	
