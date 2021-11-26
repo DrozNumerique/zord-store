@@ -12,6 +12,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	var submit   = document.getElementById('submit-file-import');
 	var reset    = document.getElementById('button-file-reset');
 	var file     = document.getElementById('file-import');
+	
+	var params = {
+		before : function() {
+			resetProcess(follow);
+			toggleImport(false);
+		},
+		after : function() {
+			toggleImport(true);
+		}
+	};
+	
 	var follow   = {
 		name     : 'import',
 		period   : 500,
@@ -72,15 +83,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	});
 	
 	document.addEventListener('process', function(event) {
-		var params = event.detail;
-		params.before = function() {
-			resetProcess(follow);
-			toggleImport(false);
-		};
-		params.after = function() {
-			toggleImport(true);
-		};
-		handleProcess(event.detail, follow);
+		handleProcess(Object.assign({}, params, event.detail), follow);
 	});
 	
 	file.addEventListener("change", function(event) {
@@ -97,20 +100,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	
 	form.addEventListener("submit", function(event) {
 	    event.preventDefault();
-		handleProcess({
+		handleProcess(Object.assign({}, params, {
     		form: form,
 	    	upload: (form.file.value !== null && form.file.value !== ''),
 			uploading: function() {
 		    	setTimeout(checkUpload, 500);
-			},
-			before: function() {
-		    	resetProcess(follow);
-		    	toggleImport(false);
-			},
-			after: function() {
-		    	toggleImport(true);
-	   		}
-		}, follow);
+			}
+		}), follow);
 	    return false;
 	}, false); 
 	
