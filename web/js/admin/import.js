@@ -1,34 +1,28 @@
 document.addEventListener("DOMContentLoaded", function(event) {
 	
-	var notify = document.getElementById('import-notify');
-	var step = document.getElementById('import-step');
-	var wait = document.getElementById('import-wait');
+	var form     = document.getElementById('import-form');
+	var notify   = document.getElementById('import-notify');
+	var step     = document.getElementById('import-step');
 	var progress = document.getElementById('import-progress');
-	var report = document.getElementById('import-report');
-	var form = document.getElementById('import-form');
-	var submit = document.getElementById('submit-file-import');
-	var reset = document.getElementById('button-file-reset');
-	var file = document.getElementById('file-import');
-	var start = document.getElementById('label-import'); 
-	var stop = document.getElementById('label-stop'); 
-	var pid = null;
-	var controls = {
-		notify:notify,
-		step:step,
-		progress:progress,
-		report:report,
-		wait:wait,
-		start:start,
-		stop:stop
-	};
-	var follow = {
-		period  : 500,
-		controls: controls,
-		killed  : function() {
-			return pid == undefined || pid == null;
-		},
-		close   : function() {
-			pid = null;
+	var report   = document.getElementById('import-report');
+	var report   = document.getElementById('import-report');
+	var wait     = document.getElementById('import-wait');
+	var start    = document.getElementById('label-import');
+	var stop     = document.getElementById('label-stop');
+	var submit   = document.getElementById('submit-file-import');
+	var reset    = document.getElementById('button-file-reset');
+	var file     = document.getElementById('file-import');
+	var follow   = {
+		name     : 'import',
+		period   : 500,
+		controls : {
+			notify   : notify,
+			step     : step,
+			progress : progress,
+			report   : report,
+			wait     : wait,
+			start    : start,
+			stop     : stop
 		}
 	};
 
@@ -54,10 +48,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 				name:'import',
 				success: function(result) {
 					progress.style = 'width:' + result.percent + '%;';
+					progress.innerHTML = result.percent > 3 ? result.percent + '%' : '';
 					step.innerHTML = result.message;
-					if (result.percent > 3) {
-						progress.innerHTML = result.percent + '%';
-					}
 					if (result.percent < 100) {
 						setTimeout(checkUpload, 500);
 					} else {
@@ -71,17 +63,21 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		);
 	}
 	
-	function launchImport(params) {
-		if (pid == undefined || pid == null) {
-		    invokeZord(params);
-	    } else {
-			resetProcess({controls: {
-				start: start,
-				stop : stop
-			}});
-	    	killProcess(pid);
-	    	pid = null;
-	    }
+	function handleImport() {
+		handleProcess({
+    		form: form,
+	    	upload: (form.file.value !== null && form.file.value !== ''),
+			uploading: function() {
+		    	setTimeout(checkUpload, 500);
+			},
+			before: function() {
+		    	resetProcess(follow);
+		    	toggleImport(false);
+			},
+			after: function() {
+		    	toggleImport(true);
+	   		}
+		}, follow);
 	}
 	
 	document.addEventListener('activate', function(event) {
@@ -93,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	});
 	
 	document.addEventListener('launch', function(event) {
-		launchImport(event.detail);
+		handleImport();
 	});
 	
 	file.addEventListener("change", function(event) {
@@ -110,26 +106,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	
 	form.addEventListener("submit", function(event) {
 	    event.preventDefault();
-		launchImport({
-    		form: this,
-	    	upload: (this.file.value !== null && this.file.value !== ''),
-			uploading: function() {
-		    	setTimeout(checkUpload, 500);
-			},
-			before: function() {
-		    	resetProcess(controls);
-		    	toggleImport(false);
-			},
-			after: function() {
-		    	toggleImport(!submit.disabled);
-	   		},
-			success: function(result) {
-		   		pid = result;
-		   		toggleImport(true);
-		    	follow = resetProcess(follow, pid);
-		   		setTimeout(followProcess(follow), 200);
-		   	}
-	    });
+		handleImport();
 	    return false;
 	}, false); 
 	
