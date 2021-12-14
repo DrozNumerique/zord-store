@@ -1,7 +1,6 @@
 {
 	"menu": {
-		"import": "Importation",
-		"publish": "Publication"
+		"import": "Importation"
 	},
 	"tab": {
 		"import": {
@@ -11,19 +10,6 @@
 			"submit": "Importer",
 			"stop": "Arrêter",
 			"continue": "Poursuivre l'import en cas d'erreur"
-		},
-		"publish": {
-			"title": "Publication des ouvrages",
-			"list": "Publications...",
-			"submit": "Valider",
-			"books": "Ouvrages",
-			"book": {
-				"id": "ISBN",
-				"title": "Titre"
-			},
-			"select": "Sélectionné",
-			"show": "Consulter en ligne",
-			"epub": "Télécharger l'ePub"
 		}
 	}
 }

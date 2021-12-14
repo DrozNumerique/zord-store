@@ -1,7 +1,6 @@
 {
 	"menu": {
-		"import": "Import",
-		"publish": "Publish"
+		"import": "Import"
 	},
 	"tab": {
 		"import": {
@@ -11,19 +10,6 @@
 			"submit": "Import",
 			"stop": "Stop",
 			"continue": "Continue import in case of error"
-		},
-		"publish": {
-			"title": "Books management",
-			"list": "Publish...",
-			"submit": "OK",
-			"books": "Books",
-			"book": {
-				"id": "ISBN",
-				"title": "Title"
-			},
-			"select": "Selected",
-			"show": "Read online",
-			"epub": "Download ePub"
 		}
 	}
 }
