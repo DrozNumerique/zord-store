@@ -27,16 +27,21 @@ bindSearch = function(params) {
 	var searchInput  = document.querySelector(inputSelector);
 	var searchButton = document.querySelector(buttonSelector);
 	
-	if (searchButton && searchInput) {
+	if (searchButton) {
 		searchButton.addEventListener('click', function(event) {
 			search(searchInput);
 		});
-		searchInput.addEventListener('keypress', function(event) {
-		    var key = event.which || event.keyCode;
-		    if (key === 13) {
-		    	search(searchInput);
-		    }
-		});
+	}
+	
+	if (searchInput) {
+		if (searchButton) {
+			searchInput.addEventListener('keypress', function(event) {
+			    var key = event.which || event.keyCode;
+			    if (key === 13) {
+			    	search(searchInput);
+			    }
+			});
+		}
 		$(inputSelector).autocomplete({
 			minLength: minLength,
 			source: source,
