@@ -7,6 +7,14 @@
 		}
 	},
 	"scripts": {
+		"CSL": {
+			"type": "text/javascript",
+			"src": "/store/js/CSL.js"
+		},
+		"biblio": {
+			"type": "text/javascript",
+			"src": "/store/js/biblio.js"
+		},
 		"matches": {
 			"type": "text/javascript",
 			"src": "/store/js/matches.js"
