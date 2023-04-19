@@ -54,9 +54,13 @@ class Import extends ProcessExecutor {
                     $this->report(0, 'bold', $thrown);
                     continue;
                 }
-                $this->report(0, 'info', "┌─────────────────────┐");
-                $this->report(0, 'info', "│ EAN : " . $ean . " │");
-                $this->report(0, 'info', "└─────────────────────┘");
+                $prefix = " EAN : ";
+                $suffix = " ";
+                $header = $prefix.$ean.$suffix;
+                $pad = str_repeat("─", strlen($header));
+                $this->report(0, 'info', "┌".$pad."┐");
+                $this->report(0, 'info', "│".$header."│");
+                $this->report(0, 'info', "└".$pad."┘");
                 $this->report(1, 'info', $score);
                 foreach ($this->steps as $step) {
                     if ($this->handle($this->execute, true, $ean, $step)) {
@@ -191,7 +195,7 @@ class Import extends ProcessExecutor {
                             foreach ($value as $item) {
                                 $document->addField($field, $item);
                             }
-                            if (in_array($key, $matches)) {
+                            if (in_array($key, $matches ?? [])) {
                                 $field = Store::field($key, true);
                                 foreach ($value as $item) {
                                     $document->addField($field, Zord::collapse($item, false));
