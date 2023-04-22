@@ -111,6 +111,9 @@ class Import extends ProcessExecutor {
     
     protected function configure($parameters = []) {
         $this->parameters = $parameters;
+        if (isset($parameters['lang'])) {
+            $this->lang = $parameters['lang'];
+        }
         if (isset($parameters['folder'])) {
             $this->folder = $parameters['folder'];
             if (substr($this->folder, -strlen(DS), strlen(DS)) != DS) {
@@ -158,8 +161,42 @@ class Import extends ProcessExecutor {
         return true;
     }
     
+    protected function folders($ean) {
+        return null;
+    }
+    
     protected function resources($ean) {
-        return true;
+        $result = true;
+        list($source,$target) = $this->folders($ean);
+        if (isset($target) && file_exists($source) && is_dir($source)) {
+            $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
+            if ($iterator->current()) {
+                $this->info(2, $target);
+                foreach ($iterator as $file) {
+                    if (is_dir($file)) {
+                        continue;
+                    }
+                    $name = substr($file, strlen($source.DS));
+                    $this->info(3, $name);
+                    $dir = dirname($target.$name);
+                    if (!is_dir($dir)) {
+                        mkdir($dir, 0777, true);
+                    }
+                    if (!copy($file, $target.$name)) {
+                        $this->logError('resources', Zord::substitute($this->locale->messages->resources->error->copy, [
+                            'source' => $file,
+                            'target' => $target
+                        ]));
+                        $result = false;
+                    }
+                }
+            } else {
+                $this->info(2, $this->locale->messages->resources->info->none);
+            }
+        } else {
+            $this->info(2, $this->locale->messages->resources->info->none);
+        }
+        return $result;
     }
     
     protected function contents($ean) {
