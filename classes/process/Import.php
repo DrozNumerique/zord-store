@@ -54,7 +54,7 @@ class Import extends ProcessExecutor {
                     $this->report(0, 'bold', $thrown);
                     continue;
                 }
-                $prefix = " EAN : ";
+                $prefix = " ";
                 $suffix = " ";
                 $header = $prefix.$ean.$suffix;
                 $pad = str_repeat("─", strlen($header));
@@ -112,7 +112,7 @@ class Import extends ProcessExecutor {
     protected function configure($parameters = []) {
         $this->parameters = $parameters;
         if (isset($parameters['lang'])) {
-            $this->lang = $parameters['lang'];
+            $this->setLang($parameters['lang']);
         }
         if (isset($parameters['folder'])) {
             $this->folder = $parameters['folder'];
@@ -167,8 +167,13 @@ class Import extends ProcessExecutor {
     
     protected function resources($ean) {
         $result = true;
-        list($source,$target) = $this->folders($ean);
-        if (isset($target) && file_exists($source) && is_dir($source)) {
+        $folders = $this->folders($ean);
+        if (!isset($folders) || !is_array($folders) || count($folders) !== 2) {
+            $this->info(2, $this->locale->messages->resources->info->none);
+            return true;
+        }
+        list($source,$target) = $folders;
+        if (isset($target) && isset($source) && file_exists($source) && is_dir($source)) {
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
             if ($iterator->current()) {
                 $this->info(2, $target);
@@ -206,6 +211,10 @@ class Import extends ProcessExecutor {
     protected function index($ean) {
         $result = true;
         $contents = $this->contents($ean);
+        if (!isset($contents) || !is_array($contents) || count($contents) === 0) {
+            $this->info(2, $this->locale->messages->resources->info->none);
+            return true;
+        }
         $matches = Zord::value('index', ['match','fields']);
         $keys = array_keys(Zord::value('index', 'fields'));
         if (!empty($contents)) {
