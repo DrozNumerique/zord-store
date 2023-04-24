@@ -219,7 +219,8 @@ class Store {
 	            )), ENT_QUOTES | ENT_XML1, 'UTF-8');
 	            break;
 	        }
-	        case 'pdf': {
+	        case 'pdf':
+	        case 'txt': {
 	            break;
 	        }
 	    }
