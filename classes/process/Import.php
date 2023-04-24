@@ -23,6 +23,10 @@ class Import extends ProcessExecutor {
         $this->continue = defined('IMPORT_CONTINUE') ? IMPORT_CONTINUE : false;
     }
     
+    public function parameters($string) {
+        $this->refs = explode(',', $string);
+    }
+    
     public function execute($parameters = []) {
         try {
             $this->configure($parameters);
