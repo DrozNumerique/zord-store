@@ -177,6 +177,12 @@ class Import extends ProcessExecutor {
             return true;
         }
         list($source,$target) = $folders;
+        if (substr($source, -strlen(DS)) !== DS) {
+            $source .= DS;
+        }
+        if (substr($target, -strlen(DS)) !== DS) {
+            $target .= DS;
+        }
         if (isset($target) && isset($source) && file_exists($source) && is_dir($source)) {
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
             if ($iterator->current()) {
