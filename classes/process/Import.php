@@ -191,7 +191,7 @@ class Import extends ProcessExecutor {
                     if (is_dir($file)) {
                         continue;
                     }
-                    $name = substr($file, strlen($source.DS));
+                    $name = substr($file, strlen($source));
                     $this->info(3, $name);
                     $dir = dirname($target.$name);
                     if (!is_dir($dir)) {
