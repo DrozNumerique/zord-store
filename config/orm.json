@@ -1,0 +1,10 @@
+{
+    "UserEntity": {
+        "join": {
+        	"UserHasQueryEntity": ["login", "user"]
+        },
+        "elements": {
+        	"UserHasQueryEntity": ["queries", "user"]
+        }
+	}
+}
