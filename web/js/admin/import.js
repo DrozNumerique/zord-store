@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	
 	var follow   = {
 		name     : 'import',
-		period   : 500,
+		period   : 1000,
 		controls : {
 			notify   : notify,
 			step     : step,
