@@ -24,7 +24,12 @@ class Import extends ProcessExecutor {
     }
     
     public function parameters($string) {
-        $this->refs = explode(',', $string);
+        $refs = $string;
+        if (strpos($string,':') > 0) {
+            list($refs, $steps) = explode(':',$string);
+            $this->steps = explode(',', $steps);
+        }
+        $this->refs = explode(',', $refs);
     }
     
     public function execute($parameters = []) {
