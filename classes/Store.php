@@ -98,7 +98,7 @@ class Store {
 	    return false;
 	}
 	
-	public static function match($keywords, $values = null, $rows = 10000) {
+	public static function match($keywords, $values = null, $rows = 10000, $fields = null) {
 	    $config = Zord::value('index', 'match');
 	    $keywords = implode(' AND ', array_map(function($val) {
 	        return '*'.Zord::collapse($val, false).'*';
@@ -119,7 +119,7 @@ class Store {
         }, array_keys($config['select']), array_values($config['select']))).' AND ';
         $filter .= '('.implode(' OR ', array_map(function($key) use ($keywords) {
             return self::field($key, true).':('.$keywords.')';
-        }, $config['fields'])).')';
+        }, $fields ?? $config['fields'])).')';
         $query->addFilterQuery($filter);
         $result = $client->query($query);
         $result = Zord::objectToArray(json_decode($result->getRawResponse()));
