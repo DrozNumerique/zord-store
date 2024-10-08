@@ -101,7 +101,7 @@ class Store {
 	public static function match($keywords, $values = null, $rows = 10000, $fields = null, $exact = false) {
 	    $config = Zord::value('index', 'match');
 	    $keywords = implode(' AND ', array_map(function($val) use ($exact) {
-	        return ($exact ? '' : '*').Zord::collapse($val, false).($exact ? '' : '*');
+	        return ($exact ? '"' : '*').Zord::collapse($val, false).($exact ? '"' : '*');
 	    }, explode(' ', str_replace(['(',')','*',':'], ' ', $keywords))));
         $results = [];
         $client = new SolrClient(Zord::value('connection', ['solr','zord']));
