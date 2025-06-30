@@ -64,7 +64,7 @@
     <dc:creator>
       <foaf:Person>
         <foaf:surname><?php echo $name[0]; ?></foaf:surname>
-<?php     if (count($name) > 0) { ?>
+<?php     if (count($name) > 1) { ?>
         <foaf:givenname><?php echo $name[1]; ?></foaf:givenname>
 <?php     } ?>
       </foaf:Person>
