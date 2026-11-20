@@ -181,7 +181,7 @@ class Store {
 	    foreach (Zord::value('search', ['fetch']) as $key) {
 	        $query->addField(self::field($key));
 	    }
-	    foreach ($criteria['sort'] ?? Zord::value('search', ['sort']) as $key => $order) {
+	    foreach ($criteria['sort'] ?? (Zord::value('search', ['sort']) ?? []) as $key => $order) {
 	        $query->addSortField(self::field($key), self::$SOLR_ORDERS[$order]);
 	    }
 	    $criteria['rows'] = $criteria['rows'] ?? SEARCH_PAGE_DEFAULT_SIZE;
